@@ -1,9 +1,12 @@
 <script>
   import Greet from "$lib/Greet.svelte";
+  import { Alert } from 'flowbite-svelte';
 </script>
 
 <h1>Welcome to Tauri!</h1>
-
+<Alert>
+  <span class="font-medium">Info alert!</span> Change a few things up and try submitting again.
+</Alert>
 <div class="row">
   <a href="https://vitejs.dev" target="_blank">
     <img src="/vite.svg" class="logo vite" alt="Vite Logo" />

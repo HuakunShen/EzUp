@@ -15,10 +15,14 @@
     "@tauri-apps/api": "^1.2.0"
   },
   "devDependencies": {
+    "@popperjs/core": "^2.11.6",
     "@sveltejs/adapter-static": "next",
     "@sveltejs/kit": "next",
     "@tauri-apps/cli": "^1.2.2",
     "autoprefixer": "^10.4.13",
+    "classnames": "^2.3.2",
+    "flowbite": "^1.6.0",
+    "flowbite-svelte": "^0.29.9",
     "postcss": "^8.4.21",
     "svelte": "^3.54.0",
     "svelte-check": "^3.0.0",
