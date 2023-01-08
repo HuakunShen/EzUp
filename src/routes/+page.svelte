@@ -1,36 +1,39 @@
-<script>
-  import Greet from "$lib/Greet.svelte";
-  import { Alert } from 'flowbite-svelte';
+<script lang="ts">
+  import DropUpload from "$lib/DropUpload.svelte";
+  import UploadURL from "$lib/UploadURL.svelte";
+  import { Heading, Progressbar } from "flowbite-svelte";
+
+  let uploading: boolean = true;
+  let progress = 0;
+  setInterval(() => {
+    progress = (progress + 1) % 100;
+  }, 1000);
 </script>
 
-<h1>Welcome to Tauri!</h1>
-<Alert>
-  <span class="font-medium">Info alert!</span> Change a few things up and try submitting again.
-</Alert>
-<div class="row">
-  <a href="https://vitejs.dev" target="_blank">
-    <img src="/vite.svg" class="logo vite" alt="Vite Logo" />
-  </a>
-  <a href="https://tauri.app" target="_blank">
-    <img src="/tauri.svg" class="logo tauri" alt="Tauri Logo" />
-  </a>
-  <a href="https://kit.svelte.dev" target="_blank">
-    <img src="/svelte.svg" class="logo svelte" alt="Svelte Logo" />
-  </a>
+<div class="flex justify-center">
+  <div class="container flex flex-col justify-center items-center max-w-2xl">
+    <div class="w-full">
+      <Heading class="mb-2" tag="h4">Upload by Drag and Drop</Heading>
+    </div>
+    <DropUpload />
+    <br />
+    <h2 class="font-medium text-lg">OR</h2>
+    <br />
+    <div class="w-full">
+      <Heading class="mb-2" tag="h4">File URL To Upload</Heading>
+      <UploadURL uploading={uploading} />
+    </div>
+    <div class="w-full">
+      <Progressbar
+        progress={progress.toString()}
+        size="h-3"
+        labelInside
+        color="blue"
+        labelInsideClass="bg-blue-600 text-blue-100 text-xs font-medium text-center p-0 leading-none rounded-full"
+        class="my-4"
+        labelOutside="Upload Progress Bar"
+      />
+      
+    </div>
+  </div>
 </div>
-
-<p>Click on the Tauri, Vite, and Svelte logos to learn more.</p>
-
-<div class="row">
-  <Greet />
-</div>
-
-<style>
-  .logo.vite:hover {
-    filter: drop-shadow(0 0 2em #747bff);
-  }
-
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00);
-  }
-</style>
