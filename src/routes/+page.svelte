@@ -1,6 +1,6 @@
 <script lang="ts">
-  import DropUpload from "$lib/DropUpload.svelte";
-  import UploadURL from "$lib/UploadURL.svelte";
+  import DropUpload from "$lib/components/DropUpload.svelte";
+  import UploadURL from "$lib/components/UploadURL.svelte";
   import { Heading, Progressbar } from "flowbite-svelte";
 
   let uploading: boolean = true;
