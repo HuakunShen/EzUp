@@ -1,5 +1,11 @@
 import { ServiceTypes } from './constants';
-import type { ImgurSetting, S3Setting, ServiceType } from './types';
+import type {
+  ImgurSetting,
+  S3Setting,
+  ServiceSetting,
+  ServiceType,
+} from './types';
+import { services } from '$lib/store';
 
 export const emptyS3Setting = (): S3Setting => ({
   region: '',
@@ -21,7 +27,33 @@ export const getEmptySetting = (serviceType: ServiceType) => {
     case ServiceTypes.Imgur:
       return emptyImgurSetting();
     default:
-        
-      break;
+      throw new Error('Service Type Not Handled');
   }
 };
+
+export function updateServiceName(serviceId: string, name: string) {
+  services.update((x) => {
+    const servicesClone = [...x];
+    for (const service of servicesClone) {
+      if (service.id === serviceId) {
+        service.name = name;
+      }
+    }
+    return servicesClone;
+  });
+}
+
+export function updateServiceSetting(
+  serviceId: string,
+  setting: ServiceSetting
+) {
+  services.update((x) => {
+    const servicesClone = [...x];
+    for (const service of servicesClone) {
+      if (service.id === serviceId) {
+        service.setting = setting;
+      }
+    }
+    return servicesClone;
+  });
+}

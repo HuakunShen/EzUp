@@ -3,6 +3,13 @@
   import S3Setting from '$lib/components/ServiceSettings/S3Setting.svelte';
   import { Input, Label, Alert, Button } from 'flowbite-svelte';
   import { services, curService, selectedServiceId } from '$lib/store';
+  import type { ServiceSetting } from '$lib/types';
+  import { updateServiceSetting } from '$lib/util';
+
+  let currentSetting: ServiceSetting | undefined;
+
+  $: currentSetting = $curService?.setting;
+  $: console.log('$curService?.setting', $curService?.setting);
 
   function onDelete() {
     services.update((x) => x.filter((y) => y.id !== $curService?.id));
@@ -22,6 +29,11 @@
     });
   }
   function onValidate() {}
+  function settingOnUpdate(setting: ServiceSetting) {
+    console.log(setting);
+
+    updateServiceSetting($curService!.id, setting);
+  }
 </script>
 
 {#if !$curService}
@@ -60,9 +72,9 @@
     />
   </div>
   {#if $curService.type === 'imgur'}
-    <ImgurSetting />
+    <ImgurSetting {settingOnUpdate} initSetting={$curService.setting} />
   {:else if $curService.type === 's3'}
-    <S3Setting />
+    <S3Setting {settingOnUpdate} initSetting={$curService.setting} />
   {:else}
     <Alert color="red">
       <span class="font-medium">Error</span> Service Type {$curService.type}

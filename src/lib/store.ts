@@ -34,18 +34,25 @@ export const curService = derived(
 );
 
 // load data
+// settingStore.set(KeyServices, [])
 settingStore.get<Service[]>(KeyServices).then((_services) => {
+  console.log(_services);
+
   const loadedServices = !!_services
     ? ServicesSchema.parse(_services)
     : ([] as Service[]);
   services.set(loadedServices);
   // data persistence on every change to store
   services.subscribe((value) => {
+    console.log(value);
+
     // localStorage.setItem(KeyServices, JSON.stringify(value));
     settingStore.set(KeyServices, value);
   });
 });
 settingStore.get<string>(KeySelectedServiceId).then((_serviceId) => {
+  console.log(_serviceId);
+
   const loadedServiceId = _serviceId ? z.string().parse(_serviceId) : undefined;
   selectedServiceId.set(loadedServiceId);
   // data persistence on every change to store
