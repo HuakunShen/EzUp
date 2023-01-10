@@ -20,6 +20,7 @@ tauri = { version = "1.2", features = ["fs-all", "global-shortcut-all", "shell-o
 aws-config = "0.52.0"
 
 tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
+tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 
 [features]
 # by default Tauri runs in production mode

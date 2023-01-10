@@ -3,9 +3,9 @@
     windows_subsystem = "windows"
 )]
 
+use aws_config::meta::region::RegionProviderChain;
 use tauri::Manager;
 use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
-use aws_config::meta::region::RegionProviderChain;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -13,26 +13,24 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+// pub async fn upload_object(
+//     client: &Client,
+//     bucket_name: &str,
+//     file_name: &str,
+//     key: &str,
+// ) -> Result<(), Error> {
+//     let body = ByteStream::from_path(Path::new(file_name)).await;
+//     client
+//         .put_object()
+//         .bucket(bucket_name)
+//         .key(key)
+//         .body(body.unwrap())
+//         .send()
+//         .await?;
 
-
-pub async fn upload_object(
-    client: &Client,
-    bucket_name: &str,
-    file_name: &str,
-    key: &str,
-) -> Result<(), Error> {
-    let body = ByteStream::from_path(Path::new(file_name)).await;
-    client
-        .put_object()
-        .bucket(bucket_name)
-        .key(key)
-        .body(body.unwrap())
-        .send()
-        .await?;
-
-    println!("Uploaded file: {}", file_name);
-    Ok(())
-}
+//     println!("Uploaded file: {}", file_name);
+//     Ok(())
+// }
 
 fn main() {
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
@@ -47,6 +45,14 @@ fn main() {
 
     let system_tray = SystemTray::new().with_menu(tray_menu);
     tauri::Builder::default()
+        // .plugin(
+        //     tauri_plugin_stronghold::Builder::new(|password| {
+        //         // TODO: hash the password here with e.g. argon2, blake2b or any other secure algorithm
+        //         todo!()
+        //     })
+        //     .build()
+        // )
+        .plugin(tauri_plugin_store::Builder::default().build())
         .invoke_handler(tauri::generate_handler![greet])
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {

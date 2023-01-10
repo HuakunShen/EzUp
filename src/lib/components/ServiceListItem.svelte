@@ -1,23 +1,22 @@
 <script lang="ts">
-  import type { Service, ServiceTypes } from "./types";
-  import ServiceAvatar from "$lib/ServiceAvatar.svelte";
+  import type { Service, ServiceType } from "$lib/types";
+  import ServiceAvatar from "$lib/components/ServiceAvatar.svelte";
   import { Li, Radio } from "flowbite-svelte";
   export let service: Service;
-  let selectedService: string = "";
+  export let group: string | undefined;
   export let changeSelection = (
-    serviceName: string,
-    serviceType: ServiceTypes
+    id: string
   ) => {};
 </script>
 
 <Li class="py-3 w-full" icon>
-  {selectedService}
   <Radio
     name="service"
     custom
     class="w-full"
-    value={service.name}
-    on:click={() => changeSelection(service.name, service.type)}
+    group={group}
+    value={service.id}
+    on:click={() => changeSelection(service.id)}
   >
     <div
       class="inline-flex justify-start items-center p-3 w-full text-gray-500 bg-white rounded-lg border border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"
