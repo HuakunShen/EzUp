@@ -4,7 +4,7 @@
 )]
 
 use aws_config::meta::region::RegionProviderChain;
-use imgurs::ImgurClient;
+use imgurs::{Error as ImgurError, ImageInfo, ImgurClient};
 use tauri::Manager;
 use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
 
@@ -26,15 +26,10 @@ fn greet(name: &str) -> String {
 // }
 
 #[tauri::command]
-async fn upload_imgur_from_url(url: String) -> String {
+async fn upload_imgur_from_url(url: String) -> Result<ImageInfo, String> {
     let client = ImgurClient::new("8f1cbf4bf4b4193");
     let upload_result = client.upload_image(&url).await;
-    // upload_result.map_err(|err| err.to_string())?;
-    let info = match upload_result {
-        Ok(file) => file,
-        Err(error) => panic!("Problem Uploading to Imgur: {:?}", error),
-    };
-    info.data.link
+    upload_result.map_err(|err| err.to_string())
 }
 
 // pub async fn upload_object(
