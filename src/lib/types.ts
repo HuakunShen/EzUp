@@ -27,3 +27,14 @@ export const NonNullServiceSchema = z.object({
 export type Service = ReturnType<typeof NonNullServiceSchema.parse>;
 export const ServiceSchema = z.nullable(NonNullServiceSchema);
 export const ServicesSchema = z.array(NonNullServiceSchema);
+
+export enum ToastType {
+  Success = 'success',
+  Warning = 'warning',
+  Error = 'error',
+}
+export type Toast = {
+  id: string;
+  type: ToastType;
+  msg: string;
+};

@@ -1,10 +1,10 @@
 import { writable, derived } from 'svelte/store';
 import type { Writable } from 'svelte/store';
-import type { Service, ServiceType } from './types';
+import type { Service, Toast, ServiceType } from './types';
 import { ServiceSchema, ServicesSchema } from './types';
 import { Store } from 'tauri-plugin-store-api';
 import { KeyServices, KeyCurSerivce, KeySelectedServiceId } from './constants';
-import { z } from 'zod';
+import { z, type Writeable } from 'zod';
 
 // these stores are tauri stores, not svelte stores
 const settingStore = new Store('.settings.dat');
@@ -15,6 +15,7 @@ dataStore.set('last-access-time', Date.now());
 
 // define writable stores
 export const services: Writable<Service[]> = writable([]);
+export const toasts: Writable<Toast[]> = writable([]);
 export const selectedServiceId: Writable<string | undefined> =
   writable(undefined);
 export const serviceMap = derived(services, ($services) => {

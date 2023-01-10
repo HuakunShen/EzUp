@@ -4,6 +4,7 @@
 )]
 
 use aws_config::meta::region::RegionProviderChain;
+use imgurs::ImgurClient;
 use tauri::Manager;
 use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
 
@@ -11,6 +12,29 @@ use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemT
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+// #[tauri::command]
+// async fn upload_imgur_from_url(url: &str) -> String {
+//     let client = ImgurClient::new("8f1cbf4bf4b4193");
+//     let info = client
+//         .upload_image("https://www.ssh.com/hubfs/Imported_Blog_Media/Securing_applications_with_ssh_tunneling___port_forwarding-2.png")
+//         .await
+//         .unwrap();
+//     format!("{}", info.data.link)
+//     // format!("Hello, {}! You've been greeted from Rust!", name)
+// }
+
+#[tauri::command]
+async fn upload_imgur_from_url(url: String) -> String {
+    let client = ImgurClient::new("8f1cbf4bf4b4193");
+    let upload_result = client.upload_image(&url).await;
+    // upload_result.map_err(|err| err.to_string())?;
+    let info = match upload_result {
+        Ok(file) => file,
+        Err(error) => panic!("Problem Uploading to Imgur: {:?}", error),
+    };
+    info.data.link
 }
 
 // pub async fn upload_object(
@@ -54,6 +78,7 @@ fn main() {
         // )
         .plugin(tauri_plugin_store::Builder::default().build())
         .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![upload_imgur_from_url])
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
             // SystemTrayEvent::LeftClick {

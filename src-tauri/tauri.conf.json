@@ -16,6 +16,9 @@
       "iconAsTemplate": true
     },
     "allowlist": {
+      "clipboard": {
+        "all": true
+      },
       "all": false,
       "globalShortcut": {
         "all": true

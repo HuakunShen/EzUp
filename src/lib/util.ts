@@ -4,8 +4,11 @@ import type {
   S3Setting,
   ServiceSetting,
   ServiceType,
+  ToastType,
 } from './types';
 import { services } from '$lib/store';
+import { toasts } from '$lib/store';
+import { v4 as uuidv4 } from 'uuid';
 
 export const emptyS3Setting = (): S3Setting => ({
   region: '',
@@ -56,4 +59,16 @@ export function updateServiceSetting(
     }
     return servicesClone;
   });
+}
+
+export function addToast(
+  toastType: ToastType,
+  msg: string,
+  duration: number = 3000
+) {
+  const toastId = uuidv4();
+  toasts.update((t) => [...t, { type: toastType, msg, id: toastId }]);
+  setTimeout(() => {
+    toasts.update((t) => t.filter((x) => x.id != toastId));
+  }, duration);
 }

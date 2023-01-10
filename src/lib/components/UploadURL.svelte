@@ -1,11 +1,20 @@
 <script lang="ts">
-  import { Input, Button, Spinner } from "flowbite-svelte";
+  import { Input, Button, Spinner } from 'flowbite-svelte';
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher<{ upload: {url: string} }>();
+
   export let uploading: boolean = false;
-  let fileUrl: string = "";
+  let fileUrl: string = '';
+
+  function onClick() {
+    dispatch('upload', {
+      url: fileUrl,
+    });
+  }
 </script>
 
 <form>
-  {fileUrl}
   <Input
     id="upload-input"
     placeholder="https://.../image.png"
@@ -27,11 +36,11 @@
         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
       /></svg
     >
-    <Button slot="right" size="sm" type="submit">
+    <Button slot="right" size="sm" type="submit" on:click={onClick}>
       {#if uploading}
         <Spinner size="5" /> <span class="ml-2">Uploading</span>
       {:else}
-        "Upload"
+        Upload
       {/if}
     </Button>
   </Input>
