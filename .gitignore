@@ -31,3 +31,4 @@ dist-ssr
 !.env.example
 
 rust-imgurs
+clipboard-image

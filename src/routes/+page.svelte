@@ -5,43 +5,50 @@
   import { invoke } from '@tauri-apps/api';
   import { writeText, readText } from '@tauri-apps/api/clipboard';
   import { addToast } from '$lib/util';
-  import { ToastType } from '$lib/types';
+  import { ToastType, ServiceTypesEnum } from '$lib/types';
+  import type { ImgurSetting, S3Setting } from '$lib/types';
+  import { curService } from '$lib/store';
 
   let uploading: boolean = false;
   let progress = 0;
-  // setInterval(() => {
-  //   progress = (progress + 1) % 100;
-  // }, 1000);
 
   function uploadImg(url: string) {
-    invoke('upload_imgur_from_url', { url: url })
-      .then((url) => {
-        uploading = false;
-        if (url) {
-          return writeText(url as string);
-        } else {
-          // TODO: Error
-          throw new Error('Unhandled Error');
-        }
+    if ($curService?.type === ServiceTypesEnum.Enum.imgur) {
+      const imgurSetting = $curService?.setting as ImgurSetting;
+      console.log(imgurSetting);
+      invoke('upload_imgur_from_url', {
+        url: url,
+        clientId: imgurSetting.clientId,
       })
-      .then(() => {
-        addToast(ToastType.Success, 'Image URL Written to Clipboard');
-      })
-      .catch((err) => {
-        addToast(ToastType.Error, err);
-        uploading = false;
-      });
+        .then((response: any) => {
+          console.log(response);
+          
+          uploading = false;
+          if (response) {
+            return writeText(response.data.link as string);
+          } else {
+            // TODO: Error
+            throw new Error('Unhandled Error');
+          }
+        })
+        .then(() => {
+          addToast(ToastType.Success, 'Image URL Written to Clipboard');
+        })
+        .catch((err) => {
+          console.error(err);
+          addToast(ToastType.Error, err);
+          uploading = false;
+        });
+    }
   }
 
   function uploadClicked(event: any) {
-    console.log('calling uploadImgurFromURL');
     uploading = true;
     return uploadImg(event.detail.url);
   }
 
   async function uploadFromClipboard() {
     const clipboardText = await readText();
-    console.log(clipboardText);
     if (!!clipboardText) {
       return uploadImg(clipboardText);
     } else {

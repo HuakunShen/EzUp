@@ -26,9 +26,11 @@ fn greet(name: &str) -> String {
 // }
 
 #[tauri::command]
-async fn upload_imgur_from_url(url: String) -> Result<ImageInfo, String> {
-    let client = ImgurClient::new("8f1cbf4bf4b4193");
+async fn upload_imgur_from_url(client_id: String, url: String) -> Result<ImageInfo, String> {
+    let client = ImgurClient::new(&client_id);
     let upload_result = client.upload_image(&url).await;
+    println!("{:?}", upload_result);
+    // format!("Hello, {}! You've been greeted from Rust!", url)
     upload_result.map_err(|err| err.to_string())
 }
 
@@ -71,9 +73,9 @@ fn main() {
         //     })
         //     .build()
         // )
-        .plugin(tauri_plugin_store::Builder::default().build())
         .invoke_handler(tauri::generate_handler![greet])
         .invoke_handler(tauri::generate_handler![upload_imgur_from_url])
+        .plugin(tauri_plugin_store::Builder::default().build())
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
             // SystemTrayEvent::LeftClick {
