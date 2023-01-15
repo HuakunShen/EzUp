@@ -58,6 +58,7 @@ settingStore.get<string>(KeySelectedServiceId).then((_serviceId) => {
   selectedServiceId.set(loadedServiceId);
   // data persistence on every change to store
   selectedServiceId.subscribe((value) => {
+    console.log(value);
     // localStorage.setItem(KeySelectedServiceId, JSON.stringify(value));
     settingStore.set(KeySelectedServiceId, value || null);
   });

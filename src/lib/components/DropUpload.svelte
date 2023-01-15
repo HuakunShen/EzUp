@@ -2,9 +2,15 @@
   import { Dropzone } from "flowbite-svelte";
   let clazz: string="w-full";
   export { clazz as class };
+
+  function onFileChange(event: any) {
+    console.log(event);
+    console.log(event.target.files[0]);
+    // console.log(URL.createObjectURL(event.target.files[0]));
+  }
 </script>
 
-<Dropzone id="dropzone" class={clazz}>
+<Dropzone id="dropzone" class={clazz} on:change={onFileChange}>
   <svg
     aria-hidden="true"
     class="mb-3 w-10 h-10 text-gray-400"

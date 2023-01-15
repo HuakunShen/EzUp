@@ -23,6 +23,9 @@
       "globalShortcut": {
         "all": true
       },
+      "path": {
+        "all": true
+      },
       "fs": {
         "all": true,
         "scope": [
@@ -33,7 +36,8 @@
           "$DESKTOP/*",
           "$DOWNLOAD/*",
           "$TEMP/*",
-          "$CONFIG/*"
+          "$CONFIG/*",
+          "$CACHE/**"
         ]
       },
       "shell": {

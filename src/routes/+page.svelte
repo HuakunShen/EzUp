@@ -8,6 +8,11 @@
   import { ToastType, ServiceTypesEnum } from '$lib/types';
   import type { ImgurSetting, S3Setting } from '$lib/types';
   import { curService } from '$lib/store';
+  import { BaseDirectory, createDir } from '@tauri-apps/api/fs';
+  import { cacheDir } from '@tauri-apps/api/path';
+  import path from 'path-browserify';
+  // var path = require('path')
+  import { v4 as uuid } from 'uuid';
 
   let uploading: boolean = false;
   let progress = 0;
@@ -22,7 +27,7 @@
       })
         .then((response: any) => {
           console.log(response);
-          
+
           uploading = false;
           if (response) {
             return writeText(response.data.link as string);
@@ -39,6 +44,34 @@
           addToast(ToastType.Error, err);
           uploading = false;
         });
+    } else if ($curService?.type === ServiceTypesEnum.Enum.s3) {
+      console.log('upload s3');
+      uploading = true;
+      console.log(path.basename(url));
+      const s3Setting = $curService?.setting as S3Setting;
+      console.log(s3Setting);
+
+      // invoke('greet', { name: 'huakun' }).then((x) => {
+      //   console.log(x);
+      // });
+      invoke('upload_s3', {
+        region: s3Setting.region,
+        bucket: s3Setting.bucket,
+        filename: url,
+        key: path.basename(url),
+        accessKeyId: s3Setting.accessKey,
+        secretAccessKey: s3Setting.secretKey,
+      })
+        .then((res) => {
+          return writeText(res as string);
+        })
+        .then(() => {
+          addToast(ToastType.Success, 'Image URL Written to Clipboard');
+        })
+        .catch((err) => {
+          addToast(ToastType.Error, err);
+          uploading = false;
+        });
     }
   }
 
@@ -49,10 +82,37 @@
 
   async function uploadFromClipboard() {
     const clipboardText = await readText();
+    uploading = true;
+    console.log(clipboardText);
+
     if (!!clipboardText) {
       return uploadImg(clipboardText);
     } else {
-      addToast(ToastType.Warning, 'TODO: Upload Image');
+      const filename = `${uuid()}.png`;
+      const cachePath = await cacheDir();
+      // console.log(cachePath);
+      const clipboardImgPath = path.join(
+        cachePath,
+        'ezup',
+        'clipboard-images',
+        filename
+      );
+      await createDir('ezup/clipboard-images', {
+        dir: BaseDirectory.Cache,
+        recursive: true,
+      });
+      invoke('image_to_file', {
+        filename: clipboardImgPath,
+      })
+        .then(() => {
+          // addToast(ToastType.Success, 'Clipboard Image Saved To FS');
+          // uploading = false;
+          uploadImg(clipboardImgPath);
+        })
+        .catch((err) => {
+          addToast(ToastType.Error, err);
+          uploading = false;
+        });
     }
   }
 </script>
@@ -62,9 +122,9 @@
     <div class="w-full">
       <Heading class="mb-2" tag="h4">Upload by Drag and Drop</Heading>
     </div>
-    <DropUpload />
+    <!-- <DropUpload />
     <br />
-    <h2 class="font-medium text-lg">OR</h2>
+    <h2 class="font-medium text-lg">OR</h2> -->
     <div class="w-full">
       <!-- <Heading class="mb-2" tag="h4">Upload from Clipboard</Heading> -->
       <div class="text-center mt-5">

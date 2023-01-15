@@ -20,11 +20,11 @@
 
 <div class="w-full flex flex-col gap-2">
   <div>
-    <Label for="clientId" class="mb-2">Region</Label>
+    <Label for="region" class="mb-2">Region</Label>
     <Input
-      id="clientId"
+      id="region"
       type="text"
-      placeholder="us-east-2"
+      placeholder="region: e.g. us-east-2"
       required
       bind:value={setting.region}
       
@@ -60,7 +60,7 @@
       bind:value={setting.secretKey}
     />
   </div>
-  <div>
+  <!-- <div>
     <Label for="domain" class="mb-2">Domain</Label>
     <Input
       id="domain"
@@ -73,5 +73,5 @@
   <div>
     <Label for="save-path" class="mb-2">Save Path</Label>
     <Input id="save-path" type="text" required bind:value={setting.savePath} />
-  </div>
+  </div> -->
 </div>

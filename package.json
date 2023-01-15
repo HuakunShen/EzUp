@@ -9,14 +9,13 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
-    "tauri": "tauri",
-    "prepare": "npm run smui-theme-light && npm run smui-theme-dark",
-    "smui-theme-light": "smui-theme compile static/smui.css -i src/theme",
-    "smui-theme-dark": "smui-theme compile static/smui-dark.css -i src/theme/dark"
+    "tauri": "tauri"
   },
   "dependencies": {
     "@tauri-apps/api": "^1.2.0",
+    "@types/path-browserify": "^1.0.0",
     "lodash": "^4.17.21",
+    "path-browserify": "^1.0.1",
     "tauri-plugin-store-api": "github:HuakunShen/tauri-plugin-store",
     "uuid": "^9.0.0",
     "zod": "^3.20.2"
