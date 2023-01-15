@@ -8,7 +8,12 @@
   import { ToastType, ServiceTypesEnum } from '$lib/types';
   import type { ImgurSetting, S3Setting } from '$lib/types';
   import { curService } from '$lib/store';
-  import { BaseDirectory, createDir, removeFile } from '@tauri-apps/api/fs';
+  import {
+    BaseDirectory,
+    createDir,
+    removeFile,
+    writeBinaryFile,
+  } from '@tauri-apps/api/fs';
   import { cacheDir } from '@tauri-apps/api/path';
   import path from 'path-browserify';
   // var path = require('path')
@@ -21,7 +26,7 @@
 
   let uploading: boolean = false;
   let progress = 0;
-  
+
   // setInterval(() => {
   //   console.log($curService);
   // }, 1000)
@@ -168,14 +173,32 @@
     }
   }
 
-  
+  function uploadThroughFileInput(file: File) {
+    var reader = new FileReader();
+    let destPath: string = '';
+    reader.onload = async function (e) {
+      const arrBuf = reader.result as ArrayBuffer;
+      const cachePath = await cacheDir();
+      destPath = path.join(cachePath, 'ezup', file.name);
+      writeBinaryFile(destPath, new Uint8Array(arrBuf), {
+        dir: BaseDirectory.Cache,
+      })
+        .then(() => {
+          return uploadImg(destPath);
+        })
+        .catch((err) => {
+          addToast(ToastType.Error, err.toString());
+        });
+    };
+    reader.readAsArrayBuffer(file);
+  }
 
   isRegistered('CommandOrControl+Alt+U')
     .then((registered) => {
       if (!registered) {
         return register('CommandOrControl+Alt+U', () => {
           console.log($curService?.type);
-          
+
           console.log('Upload Shortcut Clicked');
           return uploadFromClipboard();
         }).then(() => {
@@ -191,11 +214,13 @@
 
 <div class="flex justify-center">
   <div class="container flex flex-col justify-center items-center max-w-2xl">
-    <p><strong>Current Service:</strong>: {$curService?.name} ({$curService?.type})</p>
+    <p>
+      <strong>Current Service:</strong>: {$curService?.name} ({$curService?.type})
+    </p>
     <div class="w-full">
       <Heading class="mb-2" tag="h4">Upload by Drag and Drop</Heading>
     </div>
-    <DropUpload class="max-w-md max-h-52" />
+    <DropUpload class="max-w-md max-h-52" {uploadThroughFileInput} />
     <br />
     <h2 class="font-medium text-lg">OR</h2>
     <div class="w-full">

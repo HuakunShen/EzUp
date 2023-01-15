@@ -1,17 +1,20 @@
 <script lang="ts">
-  import { Dropzone } from "flowbite-svelte";
-  let clazz: string="w-full";
+  import { Dropzone } from 'flowbite-svelte';
+
+  let clazz: string = 'w-full';
   export { clazz as class };
+  export let uploadThroughFileInput = (file: File) => {};
 
   let files: any = [];
   function onFileChange(event: any) {
     console.log(event);
     console.log(event.target.files[0]);
-    // console.log(URL.createObjectURL(event.target.files[0]));
+    const file: File = event.target.files[0];
+    uploadThroughFileInput(file);
   }
 </script>
 
-<Dropzone id="dropzone" files={files} class={clazz} on:change={onFileChange}>
+<Dropzone id="dropzone" {files} class={clazz} on:change={onFileChange}>
   <svg
     aria-hidden="true"
     class="mb-3 w-10 h-10 text-gray-400"
