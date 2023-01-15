@@ -8,7 +8,7 @@
   import { ToastType, ServiceTypesEnum } from '$lib/types';
   import type { ImgurSetting, S3Setting } from '$lib/types';
   import { curService } from '$lib/store';
-  import { BaseDirectory, createDir } from '@tauri-apps/api/fs';
+  import { BaseDirectory, createDir, removeFile } from '@tauri-apps/api/fs';
   import { cacheDir } from '@tauri-apps/api/path';
   import path from 'path-browserify';
   // var path = require('path')
@@ -21,7 +21,7 @@
     if ($curService?.type === ServiceTypesEnum.Enum.imgur) {
       const imgurSetting = $curService?.setting as ImgurSetting;
       console.log(imgurSetting);
-      invoke('upload_imgur_from_url', {
+      return invoke('upload_imgur_from_url', {
         url: url,
         clientId: imgurSetting.clientId,
       })
@@ -54,7 +54,7 @@
       // invoke('greet', { name: 'huakun' }).then((x) => {
       //   console.log(x);
       // });
-      invoke('upload_s3', {
+      return invoke('upload_s3', {
         region: s3Setting.region,
         bucket: s3Setting.bucket,
         filename: url,
@@ -72,6 +72,8 @@
           addToast(ToastType.Error, err);
           uploading = false;
         });
+    } else {
+      return Promise.reject('Service Not Supported');
     }
   }
 
@@ -83,8 +85,6 @@
   async function uploadFromClipboard() {
     const clipboardText = await readText();
     uploading = true;
-    console.log(clipboardText);
-
     if (!!clipboardText) {
       return uploadImg(clipboardText);
     } else {
@@ -101,15 +101,22 @@
         dir: BaseDirectory.Cache,
         recursive: true,
       });
-      invoke('image_to_file', {
+      return invoke('image_to_file', {
         filename: clipboardImgPath,
       })
         .then(() => {
           // addToast(ToastType.Success, 'Clipboard Image Saved To FS');
           // uploading = false;
-          uploadImg(clipboardImgPath);
+          return uploadImg(clipboardImgPath);
+        })
+        .then(() => {
+          // Remove Cached File
+          return removeFile(clipboardImgPath, {
+            dir: BaseDirectory.Cache,
+          });
         })
         .catch((err) => {
+          console.error(err);
           addToast(ToastType.Error, err);
           uploading = false;
         });
