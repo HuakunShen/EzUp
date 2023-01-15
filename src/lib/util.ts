@@ -6,7 +6,7 @@ import type {
   ServiceType,
   ToastType,
 } from './types';
-import { services } from '$lib/store';
+import { services, logImagesUrls } from '$lib/store';
 import { toasts } from '$lib/store';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -71,4 +71,8 @@ export function addToast(
   setTimeout(() => {
     toasts.update((t) => t.filter((x) => x.id != toastId));
   }, duration);
+}
+
+export function addImageUrlToDisplay(url: string) {
+  logImagesUrls.update((urls) => [...urls, url]);
 }

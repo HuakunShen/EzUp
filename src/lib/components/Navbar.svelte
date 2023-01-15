@@ -34,5 +34,6 @@
       >Preference</NavLi
     >
     <NavLi href="/service" active={$page.route.id === "/service"}>Service</NavLi>
+    <NavLi href="/display" active={$page.route.id === "/display"}>Display</NavLi>
   </NavUl>
 </Navbar>

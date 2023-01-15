@@ -4,7 +4,7 @@
   import { Heading, Progressbar, Button } from 'flowbite-svelte';
   import { invoke } from '@tauri-apps/api';
   import { writeText, readText } from '@tauri-apps/api/clipboard';
-  import { addToast } from '$lib/util';
+  import { addToast, addImageUrlToDisplay } from '$lib/util';
   import { ToastType, ServiceTypesEnum } from '$lib/types';
   import type { ImgurSetting, S3Setting } from '$lib/types';
   import { curService } from '$lib/store';
@@ -28,6 +28,7 @@
       secretAccessKey: s3Setting.secretKey,
     })
       .then((res) => {
+        addImageUrlToDisplay(res as string);
         return writeText(res as string);
       })
       .then(() => {
@@ -53,7 +54,9 @@
 
           uploading = false;
           if (response) {
-            return writeText(response.data.link as string);
+            const url = response.data.link as string;
+            addImageUrlToDisplay(url);
+            return writeText(url);
           } else {
             // TODO: Error
             throw new Error('Unhandled Error');
@@ -70,7 +73,7 @@
     } else if ($curService?.type === ServiceTypesEnum.Enum.s3) {
       console.log('upload s3');
       console.log(url);
-      
+
       uploading = true;
       console.log(path.basename(url));
       const s3Setting = $curService?.setting as S3Setting;

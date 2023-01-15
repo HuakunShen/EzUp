@@ -16,6 +16,7 @@ dataStore.set('last-access-time', Date.now());
 // define writable stores
 export const services: Writable<Service[]> = writable([]);
 export const toasts: Writable<Toast[]> = writable([]);
+export const logImagesUrls: Writable<string[]> = writable([]);
 export const selectedServiceId: Writable<string | undefined> =
   writable(undefined);
 export const serviceMap = derived(services, ($services) => {

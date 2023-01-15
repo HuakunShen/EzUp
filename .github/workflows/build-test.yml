@@ -19,7 +19,7 @@ jobs:
     - name: Build
       run: |
         sudo apt update
-        sudo apt-get install build-essential libgtk-3-dev -y
+        sudo apt-get install build-essential libgtk-3-dev libsoup-gnome2.4-dev -y
         npm i
         npm run tauri build
       
