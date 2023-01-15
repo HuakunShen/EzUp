@@ -2,19 +2,25 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
+use arboard;
 use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_s3::types::ByteStream;
 use aws_sdk_s3::Config;
 use aws_sdk_s3::{config, Client, Error, Region, PKG_VERSION};
 use aws_types::Credentials;
+use image::{DynamicImage, ImageBuffer, RgbaImage};
 use imgurs::{Error as ImgurError, ImageInfo, ImgurClient};
+use std::path::{Path, PathBuf};
 use tauri;
 use tauri::Manager;
 use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
-use arboard;
-use image::{DynamicImage, RgbaImage, ImageBuffer};
 use uuid::{uuid, Uuid};
-use std::path::{Path, PathBuf};
+use error_chain::error_chain;
+use std::fs::File;
+use std::io::copy;
+use tempfile::Builder;
+use std::io::Cursor;
+
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -54,7 +60,7 @@ async fn upload_s3(
             "https://{}.s3.{}.amazonaws.com/{}",
             bucket2, region3, key2
         )),
-        Err(error) => Err("Upload Error".to_string())
+        Err(error) => Err("Upload Error".to_string()),
     }
     // upload_result.map_err(|err| err.to_string())
     // let url = format!("https://{}.s3.{}.amazonaws.com/{}", bucket, region, key);
@@ -72,10 +78,48 @@ async fn upload_imgur_from_url(client_id: String, url: String) -> Result<ImageIn
     upload_result.map_err(|err| err.to_string())
 }
 
+
+// error_chain! {
+//     foreign_links {
+//         Io(std::io::Error);
+//         HttpRequest(reqwest::Error);
+//     }
+// }
+
+#[tauri::command]
+async fn download_file(url: String, dest_dir: String) -> Result<String, String> {
+    // let tmp_dir = Builder::new().prefix("ezup").tempdir().unwrap();
+    let dest_dir_path = Path::new(&dest_dir);
+    let response = reqwest::get(url).await.unwrap();
+    let dest_file_path: PathBuf;
+    let mut dest = {
+        let fname = response
+            .url()
+            .path_segments()
+            .and_then(|segments| segments.last())
+            .and_then(|name| if name.is_empty() { None } else { Some(name) })
+            .unwrap_or("tmp.bin");
+        println!("file to download: '{}'", fname);
+        dest_file_path = dest_dir_path.join(fname);
+        let dest_file_path_clone = dest_file_path.clone();
+        // println!("will be located under: '{:?}'", dest_file_path);
+        File::create(dest_file_path_clone).unwrap()
+    };
+    // let content = response.text().await.unwrap();
+    // let _copyResult = copy(&mut content.as_bytes(), &mut dest).unwrap();
+    let bytes = response.bytes().await.map_err(|err| err.to_string())?;
+    let mut content =  Cursor::new(bytes);
+    copy(&mut content, &mut dest);
+    
+    // let metadata = dest.metadata().map_err(|err| err.to_string())?;
+    // metadata.
+    let dest_file_path_str = dest_file_path.into_os_string().into_string().unwrap();
+    Ok(dest_file_path_str)
+}
+
 #[tauri::command]
 fn image_to_file(filename: String) -> Result<String, String> {
     let mut clipboard = arboard::Clipboard::new().unwrap();
-    let id = Uuid::new_v4();
     // let runtime_dir = tauri::api::path::runtime_dir().unwrap();
     // println!("{}", runtime_dir);
     // let runtime_d = tauri::api::path::cache_dir().unwrap();
@@ -92,14 +136,10 @@ fn image_to_file(filename: String) -> Result<String, String> {
             let filename2 = filename.clone();
             img3.save(filename).unwrap();
             Ok(filename2)
-        },
+        }
         Err(e) => Err("failed to save image".to_string()),
     }
 }
-
-
-
-
 
 // pub async fn upload_object(
 //     client: &Client,
@@ -144,7 +184,8 @@ fn main() {
             greet,
             upload_imgur_from_url,
             upload_s3,
-            image_to_file
+            image_to_file,
+            download_file
         ])
         .plugin(tauri_plugin_store::Builder::default().build())
         .system_tray(system_tray)

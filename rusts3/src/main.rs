@@ -1,139 +1,131 @@
-/*
- * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0.
- */
+use error_chain::error_chain;
+use std::io::copy;
+use std::fs::File;
+use tempfile::Builder;
+use std::io::Cursor;
 
-use aws_config::meta::region::RegionProviderChain;
-use aws_sdk_s3::types::ByteStream;
-use aws_sdk_s3::{config, Client, Config, Error, Region, PKG_VERSION};
-use aws_types::Credentials;
-use std::path::Path;
-use std::process;
-use structopt::StructOpt;
-
-#[derive(Debug, StructOpt)]
-struct Opt {
-    /// The AWS Region.
-    #[structopt(short, long)]
-    region: Option<String>,
-
-    /// The name of the bucket.
-    #[structopt(short, long)]
-    bucket: String,
-
-    /// The name of the file to upload.
-    #[structopt(short, long)]
-    filename: String,
-
-    /// The name of the object in the bucket.
-    #[structopt(short, long)]
-    key: String,
-
-    /// Whether to display additional information.
-    #[structopt(short, long)]
-    verbose: bool,
+error_chain! {
+     foreign_links {
+         Io(std::io::Error);
+         HttpRequest(reqwest::Error);
+     }
 }
 
-// async fn upload_s3(client: &Client, region: &str, bucket: &str, filename: &str, key: &str) -> Result<String, Error> {
-//     let body = ByteStream::from_path(Path::new(filename)).await;
-//     match body {
-//         Ok(b) => {
-//             let resp = client
-//                 .put_object()
-//                 .bucket(bucket)
-//                 .key(key)
-//                 .body(b)
-//                 .send()
-//                 .await?;
-//             let url = format!("https://{}.s3.{}.amazonaws.com/{}", bucket, region, key);
-//             println!("{}", url);
-//             Ok(url)
-//         }
-//     }
+#[tokio::main]
+async fn main() -> Result<()> {
+    let tmp_dir = Builder::new().prefix("example").tempdir()?;
+    let target = "https://www.rust-lang.org/logos/rust-logo-512x512.png";
+    let response = reqwest::get(target).await?;
+
+    let mut dest = {
+        let fname = response
+            .url()
+            .path_segments()
+            .and_then(|segments| segments.last())
+            .and_then(|name| if name.is_empty() { None } else { Some(name) })
+            .unwrap_or("tmp.bin");
+
+        println!("file to download: '{}'", fname);
+        // let fname = tmp_dir.path().join(fname);
+        println!("will be located under: '{:?}'", fname);
+        File::create(fname)?
+    };
+    // let content =  response.text().await?;
+    // copy(&mut content.as_bytes(), &mut dest)?;
+    println!("{:?}", dest);
+    let mut content =  Cursor::new(response.bytes().await?);
+    copy(&mut content, &mut dest)?;
+    Ok(())
+}
+
+
+
+// use std::fs;
+// use std::io::copy;
+// use std::io::Cursor;
+// use std::fs::File;
+
+// #[tokio::main]
+// async fn main() -> Result<()> {
+
+//     let object_path = "logos/rust-logo-512x512.png";
+//     let target = format!("https://www.rust-lang.org/{}", object_path);  
+//     let response = reqwest::get(&target).await?;
+
+//     let mut dest = {
+    
+//         let fname = response
+//             .url()
+//             .path_segments()
+//             .and_then(|segments| segments.last())
+//             .and_then(|name| if name.is_empty() { None } else { Some(name) })
+//             .unwrap_or("tmp.bin");
+            
+            
+//         println!("file to download: '{}'", fname);
+
+//         let object_prefix = &object_path[..object_path.rfind('/').unwrap()];
+//         let object_name = &object_path[object_path.rfind('/').unwrap()+1..];
+//         // let output_dir = format!("{}/{}", env::current_dir().unwrap().to_str().unwrap().to_string(), object_prefix);
+//         let output_dir = "./images";
+//         fs::create_dir_all(output_dir.clone())?;
+
+//         println!("will be located under: '{}'", output_dir.clone());
+                
+//         let output_fname = format!("{}/{}", output_dir, object_name);
+//         println!("Creating the file {}", output_fname);
+        
+//         File::create(output_fname)?
+        
+//     };
+
+//     let mut content =  Cursor::new(response.bytes().await?);
+//     copy(&mut content, &mut dest)?;
+
+//     // let content =  response.text().await?;
+//     // copy(&mut content.as_bytes(), &mut dest)?;
 //     // Ok(())
 // }
 
-// snippet-end:[s3.rust.s3-helloworld]
+// extern crate reqwest;
 
-/// Lists your buckets and uploads a file to a bucket.
-/// # Arguments
-///
-/// * `-b BUCKET` - The bucket to which the file is uploaded.
-/// * `-k KEY` - The name of the file to upload to the bucket.
-/// * `[-r REGION]` - The Region in which the client is created.
-///    If not supplied, uses the value of the **AWS_REGION** environment variable.
-///    If the environment variable is not set, defaults to **us-west-2**.
-/// * `[-v]` - Whether to display additional information.
-#[tokio::main]
-async fn main() -> Result<(), Error> {
-    tracing_subscriber::fmt::init();
+// use std::fs;
+// use std::fs::File;
+// use std::io;
+// use image::{DynamicImage, ImageFormat, ImageBuffer};
 
-    let Opt {
-        bucket,
-        filename,
-        key,
-        region,
-        verbose,
-    } = Opt::from_args();
-    // let bucket = "huakun-brain";
-    // let filename = "/home/huakun/Pictures/a.png";
-    // let region = "us-east-2";
-    // let verbose = true;
-    // let key = "ab.png";
-    let region_provider = RegionProviderChain::first_try(region.map(Region::new))
-        .or_default_provider()
-        .or_else(Region::new("us-east-2"));
+// // #[tokio::main]
+// fn main() {
+//     // let mut file = std::fs::File::create("image.png").unwrap();
+//     // match resp {
+//     //     Ok(res) => println!("Response OK"),
+//     //     Err(err) => println!("Response Err")
+//     // }
+//     let resp = reqwest::blocking::get("https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png")
+//         .unwrap()
+//         .bytes()
+//         .unwrap();
+    
+//     let vec = resp.to_vec();
+//     // ImageBuffer::from_vec(width, height, buf)
+//     // DynamicImage::ImageRgba8(vec);
+//     let img = match DynamicImage::from_vec(vec, ImageFormat::Png) {
+//         Ok(img) => img,
+//         Err(e) => panic!("Failed to decode image: {:?}", e),
+//     };
+//     match fs::write("example.png", &vec) {
+//         Ok(()) => println!("File written successfully"),
+//         Err(e) => println!("Error writing file: {:?}", e),
+//     }
+//     // std::io::copy(&mut resp, &mut file);
+// }
 
-    // let region = Region::new("us-east-2");
+// // fn main() {
+// //     let bytes = vec![1, 2, 3, 4];
 
-    println!();
-
-    if verbose {
-        println!("S3 client version: {}", PKG_VERSION);
-        println!(
-            "Region:            {}",
-            region_provider.region().await.unwrap().as_ref()
-        );
-        println!("Bucket:            {}", &bucket);
-        println!("Filename:          {}", &filename);
-        println!("Key:               {}", &key);
-        println!();
-    }
-    // aws_configcrate::from_args();
-
-    // use aws_types::config::SdkConfig;
-    // Credentials::new("AKIA33M3SGN7XQAVLNVH", "zsZqmsjyUjxkbPIpHspLtiGUzmMZlV", None, None, provider_name)
-    let creds = Credentials::from_keys(
-        "AKIA33M3SGN7XQAVLNVH",
-        "zsZqmsjyUjxkbPIpHspLtiGUzmMZlV/toAXEZNiV",
-        None,
-    );
-    let region = "us-east-2";
-    let conf = Config::builder()
-        .credentials_provider(creds)
-        .region(Region::new(region))
-        .build();
-    let client = Client::from_conf(conf);
-
-    // let shared_config = aws_config::from_env().region(region_provider).load().await;
-    // shared_config.credentials_provider()
-    // let client = Client::new(&shared_config);
-
-    // let sdk_config = aws_config::load_from_env().await;
-    // let custom_credentials_provider = custom_provider(&sdk_config);
-    // aws_config::from_env().region("us-east-2").credentials_provider(credentials_provider)
-    let body = ByteStream::from_path(Path::new(&filename)).await.unwrap();
-    let resp = client
-        .put_object()
-        .bucket(&bucket)
-        .key(&key)
-        .body(body)
-        .send()
-        .await?;
-    let url = format!("https://{}.s3.{}.amazonaws.com/{}", bucket, region, key);
-    // let upload_response = upload_s3(&client, &region, &bucket, &filename, &key)
-    //     .await
-    //     .unwrap();
-    print!("{}", url);
-    Ok(())
-}
+// //     // Write the bytes to a file
+// //     match fs::write("example.png", &bytes) {
+// //         Ok(()) => println!("File written successfully"),
+// //         Err(e) => println!("Error writing file: {:?}", e),
+// //     }
+// // }
