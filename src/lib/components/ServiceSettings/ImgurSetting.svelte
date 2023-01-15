@@ -16,6 +16,7 @@
   });
 
   $: settingOnUpdate(setting);
+  $: setting = $curService ? $curService.setting as ImgurSetting : setting;
 </script>
 
 <div class="w-full flex flex-col gap-4">

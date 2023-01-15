@@ -6,10 +6,14 @@
   import { ToastType } from '$lib/types';
   import { Toast } from 'flowbite-svelte';
   import { slide } from 'svelte/transition';
+  import {curService} from '$lib/store';
   // addToast(ToastType.Success, 'success success success success success');
   // setInterval(() => {
   //   addToast(ToastType.Success, 'success');
   // }, 3000);
+  
+  $: console.log($curService?.type);
+
 </script>
 
 <main class="px-5">

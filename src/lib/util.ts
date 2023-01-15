@@ -9,6 +9,7 @@ import type {
 import { services, logImagesUrls } from '$lib/store';
 import { toasts } from '$lib/store';
 import { v4 as uuidv4 } from 'uuid';
+import _ from 'lodash';
 
 export const emptyS3Setting = (): S3Setting => ({
   region: '',
@@ -36,7 +37,8 @@ export const getEmptySetting = (serviceType: ServiceType) => {
 
 export function updateServiceName(serviceId: string, name: string) {
   services.update((x) => {
-    const servicesClone = [...x];
+    const servicesClone = _.cloneDeep(x);
+    
     for (const service of servicesClone) {
       if (service.id === serviceId) {
         service.name = name;
@@ -51,7 +53,8 @@ export function updateServiceSetting(
   setting: ServiceSetting
 ) {
   services.update((x) => {
-    const servicesClone = [...x];
+    const servicesClone = _.cloneDeep(x);
+    
     for (const service of servicesClone) {
       if (service.id === serviceId) {
         service.setting = setting;
@@ -74,5 +77,5 @@ export function addToast(
 }
 
 export function addImageUrlToDisplay(url: string) {
-  logImagesUrls.update((urls) => [...urls, url]);
+  logImagesUrls.update((urls) => [url, ...urls]);
 }

@@ -9,7 +9,6 @@
   let currentSetting: ServiceSetting | undefined;
 
   $: currentSetting = $curService?.setting;
-  $: console.log('$curService?.setting', $curService?.setting);
 
   function onDelete() {
     services.update((x) => x.filter((y) => y.id !== $curService?.id));
@@ -30,8 +29,6 @@
   }
   function onValidate() {}
   function settingOnUpdate(setting: ServiceSetting) {
-    console.log(setting);
-
     updateServiceSetting($curService!.id, setting);
   }
 </script>

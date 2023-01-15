@@ -13,10 +13,18 @@
   import path from 'path-browserify';
   // var path = require('path')
   import { v4 as uuid } from 'uuid';
-  import { register } from '@tauri-apps/api/globalShortcut';
+  import {
+    register,
+    unregisterAll,
+    isRegistered,
+  } from '@tauri-apps/api/globalShortcut';
 
   let uploading: boolean = false;
   let progress = 0;
+  
+  // setInterval(() => {
+  //   console.log($curService);
+  // }, 1000)
 
   function uploadS3(s3Setting: S3Setting, url: string) {
     return invoke('upload_s3', {
@@ -119,6 +127,9 @@
   async function uploadFromClipboard() {
     const clipboardText = await readText();
     uploading = true;
+    // console.log('$curService', $curService);
+    // console.log($curService?.type);
+
     if (!!clipboardText) {
       return uploadImg(clipboardText);
     } else {
@@ -157,19 +168,36 @@
     }
   }
 
-  // register('CommandOrControl+Alt+U', () => {
-  //   return uploadFromClipboard();
-  // });
+  
+
+  isRegistered('CommandOrControl+Alt+U')
+    .then((registered) => {
+      if (!registered) {
+        return register('CommandOrControl+Alt+U', () => {
+          console.log($curService?.type);
+          
+          console.log('Upload Shortcut Clicked');
+          return uploadFromClipboard();
+        }).then(() => {
+          console.log('Upload Shortcut Registered');
+        });
+      }
+    })
+    .catch((err) => {
+      console.error('Failed to register shortcut keys');
+      console.error(err);
+    });
 </script>
 
 <div class="flex justify-center">
   <div class="container flex flex-col justify-center items-center max-w-2xl">
+    <p><strong>Current Service:</strong>: {$curService?.name} ({$curService?.type})</p>
     <div class="w-full">
       <Heading class="mb-2" tag="h4">Upload by Drag and Drop</Heading>
     </div>
-    <!-- <DropUpload />
+    <DropUpload class="max-w-md max-h-52" />
     <br />
-    <h2 class="font-medium text-lg">OR</h2> -->
+    <h2 class="font-medium text-lg">OR</h2>
     <div class="w-full">
       <!-- <Heading class="mb-2" tag="h4">Upload from Clipboard</Heading> -->
       <div class="text-center mt-5">
@@ -183,7 +211,7 @@
       <Heading class="mb-2" tag="h4">File URL To Upload</Heading>
       <UploadURL {uploading} on:upload={uploadClicked} />
     </div>
-    <div class="w-full">
+    <!-- <div class="w-full">
       <Progressbar
         progress={progress.toString()}
         size="h-3"
@@ -193,6 +221,6 @@
         class="my-4"
         labelOutside="Upload Progress Bar"
       />
-    </div>
+    </div> -->
   </div>
 </div>

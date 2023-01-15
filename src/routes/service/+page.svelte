@@ -3,7 +3,7 @@
   import ServiceListItem from '$lib/components/ServiceListItem.svelte';
   import ServiceSetting from '$lib/components/ServiceSetting.svelte';
   import { List, Radio } from 'flowbite-svelte';
-  import { services, selectedServiceId } from '$lib/store';
+  import { services, selectedServiceId, serviceMap } from '$lib/store';
   let group: string | undefined =
     $services.length === 0 ? undefined : $services[0].id;
   selectedServiceId.subscribe((x) => {
