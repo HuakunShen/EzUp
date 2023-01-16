@@ -21,3 +21,13 @@ rustup target add x86_64-apple-darwin
 ```
 
 USe `npm run build:mac:universal` to build a darwin universal app.
+
+## Updater
+
+```bash
+tauri signer generate -w ~/.tauri/ezup.key # generate a pair of keys
+```
+
+- [vercel/hazel](https://github.com/vercel/hazel) (updater server)
+- [Vercel Console](https://vercel.com/huakunshen/tauri-ezup-updater)
+- [Deployed Updater Server](https://tauri-ezup-updater.vercel.app/)
