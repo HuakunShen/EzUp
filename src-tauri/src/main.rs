@@ -10,6 +10,7 @@ use aws_sdk_s3::{Client, Region};
 use aws_types::Credentials;
 use image::{DynamicImage, ImageBuffer, RgbaImage};
 use imgurs::{ImageInfo, ImgurClient};
+use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 use tauri;
 use tauri::Manager;
@@ -20,7 +21,6 @@ use std::fs::File;
 use std::io::copy;
 // use tempfile::Builder;
 use std::io::Cursor;
-
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -47,11 +47,26 @@ async fn upload_s3(
     let client = Client::from_conf(conf);
     let body = ByteStream::from_path(Path::new(&filename)).await.unwrap();
     let key2 = key.clone();
+    let key_path = Path::new(&key);
+    let ext = key_path.extension().unwrap().to_str().unwrap();
+    let mut content_type = "application/octet-stream";
+    match ext {
+        "png" => content_type = "image/png",
+        "jpeg" => content_type = "image/jpeg",
+        "jpg" => content_type = "image/jpeg",
+        "gif" => content_type = "image/gif",
+        "bmp" => content_type = "image/bmp",
+        "tiff" => content_type = "image/tiff",
+        "svg" => content_type = "image/svg+xml",
+        _ => panic!("Wrong Type"),
+    }
+
     let upload_result = client
         .put_object()
         .bucket(bucket2)
         .key(key)
         .body(body)
+        .content_type(content_type)
         .send()
         .await;
     match upload_result {
@@ -76,7 +91,6 @@ async fn upload_imgur_from_url(client_id: String, url: String) -> Result<ImageIn
     // format!("Hello, {}! You've been greeted from Rust!", url)
     upload_result.map_err(|err| err.to_string())
 }
-
 
 // error_chain! {
 //     foreign_links {
@@ -107,9 +121,9 @@ async fn download_file(url: String, dest_dir: String) -> Result<String, String> 
     // let content = response.text().await.unwrap();
     // let _copyResult = copy(&mut content.as_bytes(), &mut dest).unwrap();
     let bytes = response.bytes().await.map_err(|err| err.to_string())?;
-    let mut content =  Cursor::new(bytes);
+    let mut content = Cursor::new(bytes);
     copy(&mut content, &mut dest).map_err(|err| err.to_string())?;
-    
+
     // let metadata = dest.metadata().map_err(|err| err.to_string())?;
     // metadata.
     let dest_file_path_str = dest_file_path.into_os_string().into_string().unwrap();
