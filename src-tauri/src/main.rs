@@ -6,19 +6,19 @@ use arboard;
 use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_s3::types::ByteStream;
 use aws_sdk_s3::Config;
-use aws_sdk_s3::{config, Client, Error, Region, PKG_VERSION};
+use aws_sdk_s3::{Client, Region};
 use aws_types::Credentials;
 use image::{DynamicImage, ImageBuffer, RgbaImage};
-use imgurs::{Error as ImgurError, ImageInfo, ImgurClient};
+use imgurs::{ImageInfo, ImgurClient};
 use std::path::{Path, PathBuf};
 use tauri;
 use tauri::Manager;
 use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
-use uuid::{uuid, Uuid};
-use error_chain::error_chain;
+// use uuid::{uuid, Uuid};
+// use error_chain::error_chain;
 use std::fs::File;
 use std::io::copy;
-use tempfile::Builder;
+// use tempfile::Builder;
 use std::io::Cursor;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -46,7 +46,6 @@ async fn upload_s3(
         .build();
     let client = Client::from_conf(conf);
     let body = ByteStream::from_path(Path::new(&filename)).await.unwrap();
-    let region3 = &region;
     let key2 = key.clone();
     let upload_result = client
         .put_object()
@@ -109,7 +108,7 @@ async fn download_file(url: String, dest_dir: String) -> Result<String, String> 
     // let _copyResult = copy(&mut content.as_bytes(), &mut dest).unwrap();
     let bytes = response.bytes().await.map_err(|err| err.to_string())?;
     let mut content =  Cursor::new(bytes);
-    copy(&mut content, &mut dest);
+    copy(&mut content, &mut dest).map_err(|err| err.to_string())?;
     
     // let metadata = dest.metadata().map_err(|err| err.to_string())?;
     // metadata.
