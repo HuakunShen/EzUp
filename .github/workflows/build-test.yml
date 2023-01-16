@@ -6,6 +6,9 @@ on:
       - master
       - develop
 
+env:
+  TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+
 jobs:
   publish-tauri:
     strategy:
