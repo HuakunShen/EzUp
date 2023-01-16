@@ -10,6 +10,7 @@ use aws_sdk_s3::{Client, Region};
 use aws_types::Credentials;
 use image::{DynamicImage, ImageBuffer, RgbaImage};
 use imgurs::{ImageInfo, ImgurClient};
+use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 use tauri;
 use tauri::Manager;
@@ -47,11 +48,26 @@ async fn upload_s3(
     let client = Client::from_conf(conf);
     let body = ByteStream::from_path(Path::new(&filename)).await.unwrap();
     let key2 = key.clone();
+
+    let key_path = Path::new(&key);
+    let ext = key_path.extension().unwrap().to_str().unwrap();
+    let content_type = match ext {
+        "png" => "image/png",
+        "jpeg" => "image/jpeg",
+        "jpg" => "image/jpeg",
+        "gif" => "image/gif",
+        "bmp" => "image/bmp",
+        "tiff" => "image/tiff",
+        "svg" => "image/svg+xml",
+        _ => "application/octet-stream",
+    };
+
     let upload_result = client
         .put_object()
         .bucket(bucket2)
         .key(key)
         .body(body)
+        .content_type(content_type)
         .send()
         .await;
     match upload_result {
@@ -107,9 +123,9 @@ async fn download_file(url: String, dest_dir: String) -> Result<String, String> 
     // let content = response.text().await.unwrap();
     // let _copyResult = copy(&mut content.as_bytes(), &mut dest).unwrap();
     let bytes = response.bytes().await.map_err(|err| err.to_string())?;
-    let mut content =  Cursor::new(bytes);
+    let mut content = Cursor::new(bytes);
     copy(&mut content, &mut dest).map_err(|err| err.to_string())?;
-    
+
     // let metadata = dest.metadata().map_err(|err| err.to_string())?;
     // metadata.
     let dest_file_path_str = dest_file_path.into_os_string().into_string().unwrap();

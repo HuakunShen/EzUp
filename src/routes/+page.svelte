@@ -36,7 +36,7 @@
     const year = now.getUTCFullYear(),
       month = now.getUTCMonth() + 1,
       date = now.getUTCDate();
-    const key = `${year}/${month}/${date}/${path.basename(url)}`;
+    const key = `${s3Setting.prefix.replace(/^\/|\/$/g, '')}/${year}/${month}/${date}/${path.basename(url)}`;
     return invoke('upload_s3', {
       region: s3Setting.region,
       bucket: s3Setting.bucket,
@@ -202,9 +202,6 @@
     .then((registered) => {
       if (!registered) {
         return register('CommandOrControl+Alt+U', () => {
-          console.log($curService?.type);
-
-          console.log('Upload Shortcut Clicked');
           return uploadFromClipboard();
         }).then(() => {
           console.log('Upload Shortcut Registered');

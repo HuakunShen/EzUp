@@ -16,7 +16,8 @@
   });
 
   $: settingOnUpdate(setting);
-  $: setting = $curService ? $curService.setting as S3Setting : setting;
+  $: setting = $curService ? ($curService.setting as S3Setting) : setting;
+
 </script>
 
 <div class="w-full flex flex-col gap-2">
@@ -28,7 +29,6 @@
       placeholder="region: e.g. us-east-2"
       required
       bind:value={setting.region}
-      
     />
   </div>
   <div>
@@ -61,16 +61,17 @@
       bind:value={setting.secretKey}
     />
   </div>
-  <!-- <div>
-    <Label for="domain" class="mb-2">Domain</Label>
+  <div>
+    <Label for="prefix" class="mb-2">Prefix</Label>
     <Input
-      id="domain"
+      id="prefix"
       type="text"
-      placeholder="Domain"
+      placeholder="Save Path Prefix (Default Empty, e.g. 'blog/imagebed')"
       required
-      bind:value={setting.domain}
+      bind:value={setting.prefix}
     />
   </div>
+  <!--
   <div>
     <Label for="save-path" class="mb-2">Save Path</Label>
     <Input id="save-path" type="text" required bind:value={setting.savePath} />

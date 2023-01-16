@@ -2,8 +2,11 @@
   import ServicesDropdown from '$lib/components/ServicesDropdown.svelte';
   import ServiceListItem from '$lib/components/ServiceListItem.svelte';
   import ServiceSetting from '$lib/components/ServiceSetting.svelte';
-  import { List, Radio } from 'flowbite-svelte';
+  import { List, Radio, Button } from 'flowbite-svelte';
+  import { addToast } from '$lib/util';
   import { services, selectedServiceId, serviceMap } from '$lib/store';
+  import { ToastType } from '$lib/types';
+  
   let group: string | undefined =
     $services.length === 0 ? undefined : $services[0].id;
   selectedServiceId.subscribe((x) => {
@@ -18,6 +21,11 @@
     }
     selectedServiceId.set(_selected.id);
   }
+  function clearServices() {
+    selectedServiceId.set(undefined);
+    services.set([]);
+    addToast(ToastType.Success, "Done");
+  }
 </script>
 
 <div class="grid grid-cols-6 gap-x-6 w-full mt-5 place-content-between">
@@ -28,6 +36,13 @@
       {/each}
       <ServicesDropdown />
     </List>
+    <Button
+      class="mt-5"
+      outline
+      gradient
+      color="pinkToOrange"
+      on:click={clearServices}>Clear All Services</Button
+    >
   </div>
   <div class="col-span-4 mt-3">
     <ServiceSetting />
