@@ -32,11 +32,16 @@
   // }, 1000)
 
   function uploadS3(s3Setting: S3Setting, url: string) {
+    const now = new Date();
+    const year = now.getUTCFullYear(),
+      month = now.getUTCMonth() + 1,
+      date = now.getUTCDate();
+    const key = `${year}/${month}/${date}/${path.basename(url)}`;
     return invoke('upload_s3', {
       region: s3Setting.region,
       bucket: s3Setting.bucket,
       filename: url,
-      key: path.basename(url),
+      key: key,
       accessKeyId: s3Setting.accessKey,
       secretAccessKey: s3Setting.secretKey,
     })
