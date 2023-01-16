@@ -49,17 +49,16 @@ async fn upload_s3(
     let key2 = key.clone();
     let key_path = Path::new(&key);
     let ext = key_path.extension().unwrap().to_str().unwrap();
-    let mut content_type = "application/octet-stream";
-    match ext {
-        "png" => content_type = "image/png",
-        "jpeg" => content_type = "image/jpeg",
-        "jpg" => content_type = "image/jpeg",
-        "gif" => content_type = "image/gif",
-        "bmp" => content_type = "image/bmp",
-        "tiff" => content_type = "image/tiff",
-        "svg" => content_type = "image/svg+xml",
-        _ => panic!("Wrong Type"),
-    }
+    let content_type = match ext {
+        "png" => "image/png",
+        "jpeg" => "image/jpeg",
+        "jpg" => "image/jpeg",
+        "gif" => "image/gif",
+        "bmp" => "image/bmp",
+        "tiff" => "image/tiff",
+        "svg" => "image/svg+xml",
+        _ => "application/octet-stream",
+    };
 
     let upload_result = client
         .put_object()
