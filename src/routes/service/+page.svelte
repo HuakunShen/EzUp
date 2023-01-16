@@ -3,10 +3,11 @@
   import ServiceListItem from '$lib/components/ServiceListItem.svelte';
   import ServiceSetting from '$lib/components/ServiceSetting.svelte';
   import { List, Radio, Button } from 'flowbite-svelte';
-  import { addToast } from '$lib/util';
+  import { addToast, clearAllData } from '$lib/util';
+  import { notify } from '$lib/notify';
   import { services, selectedServiceId, serviceMap } from '$lib/store';
   import { ToastType } from '$lib/types';
-  
+
   let group: string | undefined =
     $services.length === 0 ? undefined : $services[0].id;
   selectedServiceId.subscribe((x) => {
@@ -21,10 +22,12 @@
     }
     selectedServiceId.set(_selected.id);
   }
-  function clearServices() {
-    selectedServiceId.set(undefined);
-    services.set([]);
-    addToast(ToastType.Success, "Done");
+  async function clearServices() {
+    // selectedServiceId.set(undefined);
+    // services.set([]);
+    await clearAllData();
+    await notify('Data All Cleared');
+    addToast(ToastType.Success, 'Done');
   }
 </script>
 

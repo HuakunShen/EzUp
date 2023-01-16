@@ -3,14 +3,12 @@
     windows_subsystem = "windows"
 )]
 use arboard;
-use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_s3::types::ByteStream;
 use aws_sdk_s3::Config;
 use aws_sdk_s3::{Client, Region};
 use aws_types::Credentials;
 use image::{DynamicImage, ImageBuffer, RgbaImage};
 use imgurs::{ImageInfo, ImgurClient};
-use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 use tauri;
 use tauri::Manager;
@@ -71,11 +69,11 @@ async fn upload_s3(
         .send()
         .await;
     match upload_result {
-        Ok(response) => Ok(format!(
+        Ok(_response) => Ok(format!(
             "https://{}.s3.{}.amazonaws.com/{}",
             bucket2, region3, key2
         )),
-        Err(error) => Err("Upload Error".to_string()),
+        Err(_error) => Err("Upload Error".to_string()),
     }
     // upload_result.map_err(|err| err.to_string())
     // let url = format!("https://{}.s3.{}.amazonaws.com/{}", bucket, region, key);
@@ -152,7 +150,7 @@ fn image_to_file(filename: String) -> Result<String, String> {
             img3.save(filename).unwrap();
             Ok(filename2)
         }
-        Err(e) => Err("failed to save image".to_string()),
+        Err(_e) => Err("failed to save image".to_string()),
     }
 }
 

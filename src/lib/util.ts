@@ -6,7 +6,14 @@ import type {
   ServiceType,
   ToastType,
 } from './types';
-import { services, logImagesUrls } from '$lib/store';
+import {
+  settingStore,
+  dataStore,
+  services,
+  selectedServiceId,
+  logImagesUrls,
+} from '$lib/store';
+
 import { toasts } from '$lib/store';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
@@ -16,8 +23,7 @@ export const emptyS3Setting = (): S3Setting => ({
   bucket: '',
   accessKey: '',
   secretKey: '',
-  domain: '',
-  savePath: '',
+  prefix: '',
 });
 
 export const emptyImgurSetting = (): ImgurSetting => ({
@@ -38,7 +44,7 @@ export const getEmptySetting = (serviceType: ServiceType) => {
 export function updateServiceName(serviceId: string, name: string) {
   services.update((x) => {
     const servicesClone = _.cloneDeep(x);
-    
+
     for (const service of servicesClone) {
       if (service.id === serviceId) {
         service.name = name;
@@ -54,7 +60,7 @@ export function updateServiceSetting(
 ) {
   services.update((x) => {
     const servicesClone = _.cloneDeep(x);
-    
+
     for (const service of servicesClone) {
       if (service.id === serviceId) {
         service.setting = setting;
@@ -78,4 +84,11 @@ export function addToast(
 
 export function addImageUrlToDisplay(url: string) {
   logImagesUrls.update((urls) => [url, ...urls]);
+}
+
+export async function clearAllData() {
+  await settingStore.clear();
+  await dataStore.clear();
+  await services.set([]);
+  await selectedServiceId.set(undefined);
 }

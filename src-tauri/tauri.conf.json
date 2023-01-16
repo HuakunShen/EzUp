@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "ezup",
+    "productName": "EzUp",
     "version": "0.0.1"
   },
   "tauri": {
@@ -16,6 +16,9 @@
       "iconAsTemplate": true
     },
     "allowlist": {
+      "notification": {
+        "all": true
+      },
       "clipboard": {
         "all": true
       },
@@ -87,14 +90,14 @@
         "https://tauri-ezup-updater.vercel.app/{{target}}/{{current_version}}"
       ],
       "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEUxRjY1M0E1RTk2MTkxRDEKUldUUmtXSHBwVlAyNGFQd2lYY0ExVUd1eFhBV1JDWkptcEc2Tm1oRjZpbmZIZERjR2N5V2RrN1MK"
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDY3OTFCOTBGMzAwNDAwMQpSV1FCUUFEemtCdDVCcE5GTFY4NGxCZW44NjBWSy95elY3dGFGSUJRR2VJdDY4cFNqcUYvYkJMRQo="
     },
     "windows": [
       {
         "fullscreen": false,
         "height": 1000,
         "resizable": true,
-        "title": "ezup",
+        "title": "EzUp",
         "width": 800
       }
     ]

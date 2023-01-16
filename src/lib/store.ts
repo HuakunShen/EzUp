@@ -7,8 +7,8 @@ import { KeyServices, KeyCurSerivce, KeySelectedServiceId } from './constants';
 import { z, type Writeable } from 'zod';
 
 // these stores are tauri stores, not svelte stores
-const settingStore = new Store('.settings.dat');
-const dataStore = new Store('.data.dat');
+export const settingStore = new Store('.settings.dat');
+export const dataStore = new Store('.data.dat');
 
 settingStore.set('last-access-time', Date.now());
 dataStore.set('last-access-time', Date.now());
