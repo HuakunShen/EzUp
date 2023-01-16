@@ -10,8 +10,7 @@ export const S3SettingSchema = z.object({
   bucket: z.string(),
   accessKey: z.string(),
   secretKey: z.string(),
-  domain: z.string(),
-  savePath: z.string(),
+  prefix: z.string(),
 });
 export type S3Setting = ReturnType<typeof S3SettingSchema.parse>;
 export type ServiceSetting = S3Setting | ImgurSetting;
