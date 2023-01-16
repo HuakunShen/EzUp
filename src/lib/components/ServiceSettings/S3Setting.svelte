@@ -17,6 +17,7 @@
 
   $: settingOnUpdate(setting);
   $: setting = $curService ? ($curService.setting as S3Setting) : setting;
+
 </script>
 
 <div class="w-full flex flex-col gap-2">
@@ -60,7 +61,6 @@
       bind:value={setting.secretKey}
     />
   </div>
-
   <div>
     <Label for="prefix" class="mb-2">Prefix</Label>
     <Input

@@ -21,6 +21,7 @@ use std::fs::File;
 use std::io::copy;
 // use tempfile::Builder;
 use std::io::Cursor;
+
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -47,6 +48,7 @@ async fn upload_s3(
     let client = Client::from_conf(conf);
     let body = ByteStream::from_path(Path::new(&filename)).await.unwrap();
     let key2 = key.clone();
+
     let key_path = Path::new(&key);
     let ext = key_path.extension().unwrap().to_str().unwrap();
     let content_type = match ext {
@@ -90,6 +92,7 @@ async fn upload_imgur_from_url(client_id: String, url: String) -> Result<ImageIn
     // format!("Hello, {}! You've been greeted from Rust!", url)
     upload_result.map_err(|err| err.to_string())
 }
+
 
 // error_chain! {
 //     foreign_links {

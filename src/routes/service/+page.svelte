@@ -6,6 +6,7 @@
   import { addToast } from '$lib/util';
   import { services, selectedServiceId, serviceMap } from '$lib/store';
   import { ToastType } from '$lib/types';
+  
   let group: string | undefined =
     $services.length === 0 ? undefined : $services[0].id;
   selectedServiceId.subscribe((x) => {

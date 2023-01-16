@@ -202,8 +202,6 @@
     .then((registered) => {
       if (!registered) {
         return register('CommandOrControl+Alt+U', () => {
-          // console.log($curService?.type);
-          // console.log('Upload Shortcut Clicked');
           return uploadFromClipboard();
         }).then(() => {
           console.log('Upload Shortcut Registered');
