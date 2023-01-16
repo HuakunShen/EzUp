@@ -29,3 +29,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+rust-imgurs
+clipboard-image

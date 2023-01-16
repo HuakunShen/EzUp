@@ -4,15 +4,42 @@
     "beforeBuildCommand": "npm run build",
     "devPath": "http://localhost:1420",
     "distDir": "../build",
-    "withGlobalTauri": false
+    "withGlobalTauri": true
   },
   "package": {
     "productName": "ezup",
     "version": "0.0.0"
   },
   "tauri": {
+    "systemTray": {
+      "iconPath": "icons/icon.ico",
+      "iconAsTemplate": true
+    },
     "allowlist": {
+      "clipboard": {
+        "all": true
+      },
       "all": false,
+      "globalShortcut": {
+        "all": true
+      },
+      "path": {
+        "all": true
+      },
+      "fs": {
+        "all": true,
+        "scope": [
+          "$APPDATA/*",
+          "$APPLOCALDATA/*",
+          "$APPLOG/*",
+          "$APPCONFIG/*",
+          "$DESKTOP/*",
+          "$DOWNLOAD/*",
+          "$TEMP/*",
+          "$CONFIG/*",
+          "$CACHE/**"
+        ]
+      },
       "shell": {
         "all": false,
         "open": true
@@ -33,7 +60,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "tech.huakun.ezup",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -60,7 +87,7 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 1000,
         "resizable": true,
         "title": "ezup",
         "width": 800

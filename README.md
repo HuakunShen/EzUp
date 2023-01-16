@@ -1,8 +1,11 @@
-# Svelte-Kit + Vite
+# EzUp
 
-This template should help get you started developing with Tauri and Svelte-Kit in Vite.
+Eazy Uploader is for easy image/file uploader. 
 
-## Recommended IDE Setup
+Here is some demo screenshots.
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
-
+<div>
+    <img src="https://huakun-brain.s3.us-east-2.amazonaws.com/2023/1/16/8b5952f9-0e2b-4eab-b994-29916911cd0f.png" width="60%" />
+    <img src="https://huakun-brain.s3.us-east-2.amazonaws.com/2023/1/16/d84046a6-b213-4635-ac56-c649399f16df.png" width="60%" />
+    <img src="https://huakun-brain.s3.us-east-2.amazonaws.com/2023/1/16/8e044453-2dfc-4f43-be28-e2666f33e5d0.png" width="60%" />
+</div>
