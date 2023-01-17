@@ -8,21 +8,17 @@
   import { ToastType, ServiceTypesEnum } from '$lib/types';
   import type { ImgurSetting, S3Setting } from '$lib/types';
   import { curService } from '$lib/store';
+  import { notify } from '$lib/notify';
   import {
     BaseDirectory,
     createDir,
     removeFile,
     writeBinaryFile,
   } from '@tauri-apps/api/fs';
-  import { cacheDir } from '@tauri-apps/api/path';
+  import { cacheDir, configDir } from '@tauri-apps/api/path';
   import path from 'path-browserify';
-  // var path = require('path')
   import { v4 as uuid } from 'uuid';
-  import {
-    register,
-    unregisterAll,
-    isRegistered,
-  } from '@tauri-apps/api/globalShortcut';
+  import { register, isRegistered } from '@tauri-apps/api/globalShortcut';
 
   let uploading: boolean = false;
   let progress = 0;
@@ -36,7 +32,10 @@
     const year = now.getUTCFullYear(),
       month = now.getUTCMonth() + 1,
       date = now.getUTCDate();
-    const key = `${s3Setting.prefix.replace(/^\/|\/$/g, '')}/${year}/${month}/${date}/${path.basename(url)}`;
+    const key = `${s3Setting.prefix.replace(
+      /^\/|\/$/g,
+      ''
+    )}/${year}/${month}/${date}/${path.basename(url)}`;
     return invoke('upload_s3', {
       region: s3Setting.region,
       bucket: s3Setting.bucket,
@@ -52,9 +51,11 @@
       .then(() => {
         uploading = false;
         addToast(ToastType.Success, 'Image URL Written to Clipboard');
+        return notify('Success', 'Image URL Written to Clipboard');
       })
       .catch((err) => {
         addToast(ToastType.Error, err);
+        return notify('Error', err);
         uploading = false;
       });
   }
@@ -82,10 +83,12 @@
         })
         .then(() => {
           addToast(ToastType.Success, 'Image URL Written to Clipboard');
+          return notify('Success', 'Image URL Written to Clipboard');
         })
         .catch((err) => {
           console.error(err);
           addToast(ToastType.Error, err);
+          return notify('Error', err);
           uploading = false;
         });
     } else if ($curService?.type === ServiceTypesEnum.Enum.s3) {
@@ -173,6 +176,7 @@
         .catch((err) => {
           console.error(err);
           addToast(ToastType.Error, err);
+          return notify('Error', err);
           uploading = false;
         });
     }
@@ -193,6 +197,7 @@
         })
         .catch((err) => {
           addToast(ToastType.Error, err.toString());
+          return notify('Error', err);
         });
     };
     reader.readAsArrayBuffer(file);
@@ -219,6 +224,8 @@
     <p>
       <strong>Current Service:</strong>: {$curService?.name} ({$curService?.type})
     </p>
+    <!-- <Button on:click={() => {notify('Test Notification')}}>Send Notification</Button> -->
+
     <div class="w-full">
       <Heading class="mb-2" tag="h4">Upload by Drag and Drop</Heading>
     </div>

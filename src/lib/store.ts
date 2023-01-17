@@ -7,11 +7,8 @@ import { KeyServices, KeyCurSerivce, KeySelectedServiceId } from './constants';
 import { z, type Writeable } from 'zod';
 
 // these stores are tauri stores, not svelte stores
-const settingStore = new Store('.settings.dat');
-const dataStore = new Store('.data.dat');
-
-settingStore.set('last-access-time', Date.now());
-dataStore.set('last-access-time', Date.now());
+export const settingStore = new Store('settings.json');
+export const dataStore = new Store('data.json');
 
 // define writable stores
 export const services: Writable<Service[]> = writable([]);
@@ -35,38 +32,69 @@ export const curService = derived(
   }
 );
 
-// load data
-// settingStore.set(KeyServices, [])
-settingStore.get<Service[]>(KeyServices).then((_services) => {
-  console.log(_services);
+export async function init() {
+  await settingStore.set('last-access-time', Date.now());
+  await dataStore.set('last-access-time', Date.now());
+  const rawServices = await settingStore.get<Service[]>(KeyServices);
+  const rawSelectedServiceId = await settingStore.get<string>(
+    KeySelectedServiceId
+  );
 
-  const loadedServices = !!_services
-    ? ServicesSchema.parse(_services)
+  const loadedServices = !!rawServices
+    ? ServicesSchema.parse(rawServices)
     : ([] as Service[]);
   services.set(loadedServices);
-  // data persistence on every change to store
-  services.subscribe((value) => {
+  services.subscribe(async (value) => {
     console.log(value);
 
     // localStorage.setItem(KeyServices, JSON.stringify(value));
-    settingStore.set(KeyServices, value);
+    await settingStore.set(KeyServices, value);
   });
-});
-settingStore.get<string>(KeySelectedServiceId).then((_serviceId) => {
-  console.log(_serviceId);
 
-  const loadedServiceId = _serviceId ? z.string().parse(_serviceId) : undefined;
-  selectedServiceId.set(loadedServiceId);
-  // data persistence on every change to store
-  selectedServiceId.subscribe((value) => {
+  const loadedServiceId = rawSelectedServiceId
+    ? z.string().parse(rawSelectedServiceId)
+    : undefined;
+  selectedServiceId?.set(loadedServiceId);
+  selectedServiceId.subscribe(async (value) => {
     console.log(value);
     // localStorage.setItem(KeySelectedServiceId, JSON.stringify(value));
-    settingStore.set(KeySelectedServiceId, value || null);
+    await settingStore.set(KeySelectedServiceId, value || null);
   });
-});
+}
+
+// load data
+// settingStore.set(KeyServices, [])
+// settingStore.get<Service[]>(KeyServices).then((_services) => {
+//   console.log(_services);
+
+//   const loadedServices = !!_services
+//     ? ServicesSchema.parse(_services)
+//     : ([] as Service[]);
+//   services.set(loadedServices);
+//   // data persistence on every change to store
+//   services.subscribe((value) => {
+//     console.log(value);
+
+//     // localStorage.setItem(KeyServices, JSON.stringify(value));
+//     settingStore.set(KeyServices, value);
+//   });
+// });
+// settingStore.get<string>(KeySelectedServiceId).then((_serviceId) => {
+//   console.log(_serviceId);
+
+//   const loadedServiceId = _serviceId ? z.string().parse(_serviceId) : undefined;
+//   selectedServiceId.set(loadedServiceId);
+//   // data persistence on every change to store
+//   selectedServiceId.subscribe((value) => {
+//     console.log(value);
+//     // localStorage.setItem(KeySelectedServiceId, JSON.stringify(value));
+//     settingStore.set(KeySelectedServiceId, value || null);
+//   });
+// });
 
 export default {
   services,
   selectedServiceId,
   curService,
+  init,
 };
