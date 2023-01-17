@@ -40,3 +40,7 @@ tauri signer generate -w ~/.tauri/ezup.key # generate a pair of keys
 - [vercel/hazel](https://github.com/vercel/hazel) (updater server)
 - [Vercel Console](https://vercel.com/huakunshen/tauri-ezup-updater)
 - [Deployed Updater Server](https://tauri-ezup-updater.vercel.app/)
+
+Update Server for this app: https://tauri-ezup-updater.vercel.app/
+
+How to deploy an update server for Tauri App in one click: https://github.com/HuakunShen/tauri-update-server
