@@ -34,7 +34,8 @@ jobs:
           # libayatana-appindicator3-dev is for fixing an error https://github.com/tauri-apps/tauri/issues/5175
       - name: install app dependencies and build it
         run: npm i && npm run build && npm run tauri build
-      - uses: tauri-apps/tauri-action@v0
+      - name: Tauri Build and Release (Non MacOS)
+        uses: tauri-apps/tauri-action@v0
         if: matrix.platform != 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,7 +45,11 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
-      - uses: tauri-apps/tauri-action@v0
+      - name: Add Mac Universal Target
+        if: matrix.platform == 'macos-latest'
+        run: rustup target add aarch64-apple-darwin
+      - name: Tauri Build and Release (MacOS Universal Build)
+        uses: tauri-apps/tauri-action@v0
         if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
