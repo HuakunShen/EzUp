@@ -32,10 +32,13 @@
     const year = now.getUTCFullYear(),
       month = now.getUTCMonth() + 1,
       date = now.getUTCDate();
-    const key = `${s3Setting.prefix.replace(
+    let key = `${s3Setting.prefix.replace(
       /^\/|\/$/g,
       ''
     )}/${year}/${month}/${date}/${path.basename(url)}`;
+    if (key.length > 0 && key[0] === '/') {
+      key = key.substring(1);
+    }
     return invoke('upload_s3', {
       region: s3Setting.region,
       bucket: s3Setting.bucket,
