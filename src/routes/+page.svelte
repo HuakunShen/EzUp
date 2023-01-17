@@ -15,7 +15,7 @@
     removeFile,
     writeBinaryFile,
   } from '@tauri-apps/api/fs';
-  import { cacheDir } from '@tauri-apps/api/path';
+  import { cacheDir, configDir } from '@tauri-apps/api/path';
   import path from 'path-browserify';
   import { v4 as uuid } from 'uuid';
   import { register, isRegistered } from '@tauri-apps/api/globalShortcut';

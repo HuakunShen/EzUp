@@ -7,8 +7,9 @@
     NavHamburger,
     Button,
     Input,
-  } from "flowbite-svelte";
-  import { page } from "$app/stores";
+  } from 'flowbite-svelte';
+  import { page } from '$app/stores';
+  import { isDev } from '$lib/util';
 </script>
 
 <Navbar let:hidden let:toggle>
@@ -29,11 +30,17 @@
     <NavHamburger on:click={toggle} />
   </div>
   <NavUl {hidden} class="order-1">
-    <NavLi href="/" active={$page.route.id === "/"}>Home</NavLi>
-    <NavLi href="/preference" active={$page.route.id === "/preference"}
+    <NavLi href="/" active={$page.route.id === '/'}>Home</NavLi>
+    <NavLi href="/preference" active={$page.route.id === '/preference'}
       >Preference</NavLi
     >
-    <NavLi href="/service" active={$page.route.id === "/service"}>Service</NavLi>
-    <NavLi href="/display" active={$page.route.id === "/display"}>Display</NavLi>
+    <NavLi href="/service" active={$page.route.id === '/service'}>Service</NavLi
+    >
+    <NavLi href="/display" active={$page.route.id === '/display'}>Display</NavLi
+    >
+    <NavLi href="/about" active={$page.route.id === '/about'}>About</NavLi>
+    {#if isDev()}
+      <NavLi href="/debug" active={$page.route.id === '/debug'}>Debug</NavLi>
+    {:else}{/if}
   </NavUl>
 </Navbar>

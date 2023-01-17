@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - release
-      - master
-      - develop
 
 env:
   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
@@ -37,11 +35,23 @@ jobs:
       - name: install app dependencies and build it
         run: npm i && npm run build && npm run tauri build
       - uses: tauri-apps/tauri-action@v0
+        if: matrix.platform != 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
-          releaseName: 'App v__VERSION__'
+          tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+          releaseName: 'EzUp v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: true
+          prerelease: false
+      - uses: tauri-apps/tauri-action@v0
+        if: matrix.platform == 'macos-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version
+          releaseName: 'EzUp v__VERSION__'
+          args: '--target universal-apple-darwin' # build universal app for mac, tauri is small any ways. 6MB -> 13MB. No difference
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false

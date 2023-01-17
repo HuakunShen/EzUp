@@ -6,14 +6,17 @@
   import { ToastType } from '$lib/types';
   import { Toast } from 'flowbite-svelte';
   import { slide } from 'svelte/transition';
-  import {curService} from '$lib/store';
+  import { curService, init as initStore } from '$lib/store';
+  
   // addToast(ToastType.Success, 'success success success success success');
   // setInterval(() => {
   //   addToast(ToastType.Success, 'success');
   // }, 3000);
   
+  initStore().then(() => {
+    console.log('Store Initialized');
+  });
   $: console.log($curService?.type);
-
 </script>
 
 <main class="px-5">
