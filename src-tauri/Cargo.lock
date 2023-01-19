@@ -4159,7 +4159,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-clipboard"
 version = "0.0.0"
-source = "git+https://github.com/CrossCopy/tauri-plugin-clipboard-api?branch=dev#780bf9f26ad65459963817d31b6bfee300f66d01"
+source = "git+https://github.com/CrossCopy/tauri-plugin-clipboard-api?branch=main#780bf9f26ad65459963817d31b6bfee300f66d01"
 dependencies = [
  "arboard",
  "base64 0.21.0",

@@ -21,7 +21,7 @@ aws-config = "0.52.0"
 
 tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
-tauri-plugin-clipboard = { git = "https://github.com/CrossCopy/tauri-plugin-clipboard-api", branch = "dev" }
+tauri-plugin-clipboard = { git = "https://github.com/CrossCopy/tauri-plugin-clipboard-api", branch = "main" }
 imgurs = "0.11.1"
 aws-sdk-s3 = "0.22.0"
 aws-types = { version = "0.52.0", features = ["hardcoded-credentials"] }
