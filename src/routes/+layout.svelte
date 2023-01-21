@@ -1,25 +1,44 @@
 <script lang="ts">
   import '../app.css';
   import Navbar from '$lib/components/Navbar.svelte';
+  import TitleBar from '$lib/components/TitleBar.svelte';
   import { toasts } from '$lib/store';
   import { addToast } from '$lib/util';
   import { ToastType } from '$lib/types';
   import { Toast } from 'flowbite-svelte';
   import { slide } from 'svelte/transition';
   import { curService, init as initStore } from '$lib/store';
-  
+  import { register, isRegistered } from '@tauri-apps/api/globalShortcut';
+  import { appWindow } from '@tauri-apps/api/window';
+
   // addToast(ToastType.Success, 'success success success success success');
   // setInterval(() => {
   //   addToast(ToastType.Success, 'success');
   // }, 3000);
-  
+
   initStore().then(() => {
     console.log('Store Initialized');
   });
   $: console.log($curService?.type);
+
+  isRegistered('Control+Command+U').then((registered) => {
+    console.log(registered);
+    if (!registered) {
+      register('Control+Command+U', async () => {
+        const visible = await appWindow.isVisible();
+        if (visible) {
+          await appWindow.hide();
+        } else {
+          await appWindow.show();
+          await appWindow.setFocus()
+        }
+      });
+    }
+  });
 </script>
 
-<main class="px-5">
+<main class="h-screen">
+  <TitleBar />
   <Navbar />
   <div class="flex justify-center">
     <div class="max-w-full min-w-[5em]">

@@ -26,7 +26,7 @@
     </span>
   </NavBrand>
   <div class="flex md:order-2">
-    <Button size="sm">Get started</Button>
+    <!-- <Button size="sm">Get started</Button> -->
     <NavHamburger on:click={toggle} />
   </div>
   <NavUl {hidden} class="order-1">

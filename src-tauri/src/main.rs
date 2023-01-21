@@ -18,6 +18,7 @@ use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemT
 use std::fs::File;
 use std::io::copy;
 // use tempfile::Builder;
+use std::borrow::Cow;
 use std::io::Cursor;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -90,7 +91,6 @@ async fn upload_imgur_from_url(client_id: String, url: String) -> Result<ImageIn
     // format!("Hello, {}! You've been greeted from Rust!", url)
     upload_result.map_err(|err| err.to_string())
 }
-
 
 // error_chain! {
 //     foreign_links {
@@ -201,6 +201,7 @@ fn main() {
             download_file
         ])
         .plugin(tauri_plugin_store::Builder::default().build())
+        .plugin(tauri_plugin_clipboard::init())
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
             // SystemTrayEvent::LeftClick {
@@ -240,6 +241,13 @@ fn main() {
             },
             _ => {}
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        // .run(tauri::generate_context!())
+        .expect("error while running tauri application")
+        .run(|_app_handle, event| match event {
+            tauri::RunEvent::ExitRequested { api, .. } => {
+                api.prevent_exit();
+            }
+            _ => {}
+        });
 }

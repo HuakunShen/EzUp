@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 body {
-    background-color: #131826;
+    /* background-color: #131826; */
+    background-color: rgba(19, 24, 38, 0.7);
+    backdrop-filter: blur(40px);
     color: white;
+    border-radius: 20px;
 }

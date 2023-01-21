@@ -32,10 +32,13 @@
     const year = now.getUTCFullYear(),
       month = now.getUTCMonth() + 1,
       date = now.getUTCDate();
-    const key = `${s3Setting.prefix.replace(
+    let key = `${s3Setting.prefix.replace(
       /^\/|\/$/g,
       ''
     )}/${year}/${month}/${date}/${path.basename(url)}`;
+    if (key.length > 0 && key[0] === '/') {
+      key = key.substring(1);
+    }
     return invoke('upload_s3', {
       region: s3Setting.region,
       bucket: s3Setting.bucket,
@@ -224,8 +227,6 @@
     <p>
       <strong>Current Service:</strong>: {$curService?.name} ({$curService?.type})
     </p>
-    <!-- <Button on:click={() => {notify('Test Notification')}}>Send Notification</Button> -->
-
     <div class="w-full">
       <Heading class="mb-2" tag="h4">Upload by Drag and Drop</Heading>
     </div>
@@ -245,16 +246,5 @@
       <Heading class="mb-2" tag="h4">File URL To Upload</Heading>
       <UploadURL {uploading} on:upload={uploadClicked} />
     </div>
-    <!-- <div class="w-full">
-      <Progressbar
-        progress={progress.toString()}
-        size="h-3"
-        labelInside
-        color="blue"
-        labelInsideClass="bg-blue-600 text-blue-100 text-xs font-medium text-center p-0 leading-none rounded-full"
-        class="my-4"
-        labelOutside="Upload Progress Bar"
-      />
-    </div> -->
   </div>
 </div>

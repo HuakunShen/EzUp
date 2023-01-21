@@ -1,24 +1,24 @@
 <script lang="ts">
   import { Button } from 'flowbite-svelte';
-  import { cacheDir, configDir } from '@tauri-apps/api/path';
+  import { configDir } from '@tauri-apps/api/path';
   import { Store } from 'tauri-plugin-store-api';
-  import { checkUpdate } from '@tauri-apps/api/updater';
-
+  import { notify } from '$lib/notify';
+  import {
+    isPermissionGranted,
+    requestPermission,
+    sendNotification,
+  } from '@tauri-apps/api/notification';
+  import { readText, readImage } from 'tauri-plugin-clipboard-api';
   const store = new Store('settings-debug.json');
 
   async function debug() {
-    console.log(await configDir());
-    console.log(process.env.NODE_ENV);
-    // const update = await checkUpdate();
-    // console.log(update);
-
-    checkUpdate()
-      .then((update) => {
-        console.log(update);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    await notify('Hello');
+    // readText().then((text) => {
+    //   console.log(text);
+    // });
+    readImage().then((data) => {
+      console.log(data);
+    });
   }
 
   async function setStore() {
