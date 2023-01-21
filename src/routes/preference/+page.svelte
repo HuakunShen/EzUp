@@ -1,24 +1,38 @@
 <script lang="ts">
-  import { register, isRegistered } from "@tauri-apps/api/globalShortcut";
-  import { createDir, BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
-
+  import { register, isRegistered } from '@tauri-apps/api/globalShortcut';
+  import { createDir, BaseDirectory, writeTextFile } from '@tauri-apps/api/fs';
+  import {
+    Table,
+    TableBody,
+    TableBodyCell,
+    TableBodyRow,
+    TableHead,
+    TableHeadCell,
+    Checkbox,
+    TableSearch,
+    A,
+    P,
+    Li,
+    Heading,
+    List,
+  } from 'flowbite-svelte';
   import {
     isPermissionGranted,
     requestPermission,
-  } from "@tauri-apps/api/notification";
+  } from '@tauri-apps/api/notification';
   async function getNotificationPermission() {
     let permissionGranted = await isPermissionGranted();
-    console.log("permissionGranted", permissionGranted);
-    
+    console.log('permissionGranted', permissionGranted);
+
     if (!permissionGranted) {
       const permission = await requestPermission();
-      console.log("permission", permission);
-      
-      permissionGranted = permission === "granted";
-      console.log("permissionGranted", permissionGranted);
+      console.log('permission', permission);
+
+      permissionGranted = permission === 'granted';
+      console.log('permissionGranted', permissionGranted);
     }
   }
-  getNotificationPermission()
+  getNotificationPermission();
   // isPermissionGranted()
   //   .then((isGranted?: boolean) => {
   //     if (!isGranted) {
@@ -50,5 +64,25 @@
 </script>
 
 <div class="text-left w-full">
-  <h1>Preference Page</h1>
+  <h1 class="text-3xl">Preference</h1>
+  <Table>
+    <TableHead>
+      <TableHeadCell>Command</TableHeadCell>
+      <TableHeadCell>Shortcut</TableHeadCell>
+    </TableHead>
+    <TableBody>
+      <TableBodyRow>
+        <TableBodyCell>Toggle Window</TableBodyCell>
+        <TableBodyCell>
+          Control+Command+U
+        </TableBodyCell>
+      </TableBodyRow>
+      <TableBodyRow>
+        <TableBodyCell>Upload</TableBodyCell>
+        <TableBodyCell>
+          Command+Alt+U
+        </TableBodyCell>
+      </TableBodyRow>
+    </TableBody>
+  </Table>
 </div>

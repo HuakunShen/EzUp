@@ -17,7 +17,7 @@
 </script>
 
 <div>
-  <div class="grid grid-cols-2">
+  <div class="grid grid-cols-2 px-5">
     <div class="flex justify-center">
       <img class="max-h-32" src={imageUrl} alt="" />
     </div>

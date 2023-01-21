@@ -49,6 +49,7 @@ export async function init() {
 
     // localStorage.setItem(KeyServices, JSON.stringify(value));
     await settingStore.set(KeyServices, value);
+    await settingStore.save();
   });
 
   const loadedServiceId = rawSelectedServiceId
@@ -59,6 +60,7 @@ export async function init() {
     console.log(value);
     // localStorage.setItem(KeySelectedServiceId, JSON.stringify(value));
     await settingStore.set(KeySelectedServiceId, value || null);
+    await settingStore.save();
   });
 }
 

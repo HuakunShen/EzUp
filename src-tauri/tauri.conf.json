@@ -8,9 +8,10 @@
   },
   "package": {
     "productName": "EzUp",
-    "version": "0.0.3"
+    "version": "0.0.4"
   },
   "tauri": {
+    "macOSPrivateApi": true,
     "systemTray": {
       "iconPath": "icons/icon.ico",
       "iconAsTemplate": true
@@ -54,6 +55,38 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "window": {
+        "all": true,
+        "center": true,
+        "close": true,
+        "create": true,
+        "hide": true,
+        "maximize": false,
+        "minimize": false,
+        "print": false,
+        "requestUserAttention": false,
+        "setAlwaysOnTop": false,
+        "setCursorGrab": false,
+        "setCursorIcon": false,
+        "setCursorPosition": false,
+        "setCursorVisible": false,
+        "setDecorations": false,
+        "setFocus": true,
+        "setFullscreen": false,
+        "setIcon": false,
+        "setIgnoreCursorEvents": false,
+        "setMaxSize": false,
+        "setMinSize": false,
+        "setPosition": false,
+        "setResizable": false,
+        "setSize": false,
+        "setSkipTaskbar": false,
+        "setTitle": false,
+        "show": true,
+        "startDragging": true,
+        "unmaximize": false,
+        "unminimize": false
       }
     },
     "bundle": {
@@ -103,10 +136,12 @@
     "windows": [
       {
         "fullscreen": false,
+        "transparent": true,
         "height": 1000,
+        "width": 800,
         "resizable": true,
-        "title": "EzUp",
-        "width": 800
+        "decorations": false,
+        "title": "EzUp"
       }
     ]
   }
