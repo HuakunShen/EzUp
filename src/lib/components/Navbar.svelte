@@ -31,9 +31,9 @@
   </div>
   <NavUl {hidden} class="order-1">
     <NavLi href="/" active={$page.route.id === '/'}>Home</NavLi>
-    <!-- <NavLi href="/preference" active={$page.route.id === '/preference'}
+    <NavLi href="/preference" active={$page.route.id === '/preference'}
       >Preference</NavLi
-    > -->
+    >
     <NavLi href="/service" active={$page.route.id === '/service'}>Service</NavLi
     >
     <NavLi href="/display" active={$page.route.id === '/display'}>Display</NavLi

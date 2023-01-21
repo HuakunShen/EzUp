@@ -16,12 +16,13 @@ tauri-build = { version = "1.2", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.2", features = ["app-all", "clipboard-all", "dialog-all", "fs-all", "global-shortcut-all", "notification-all", "path-all", "shell-open", "system-tray", "updater"] }
+tauri = { version = "1.2", features = ["app-all", "clipboard-all", "dialog-all", "fs-all", "global-shortcut-all", "macos-private-api", "notification-all", "path-all", "shell-open", "system-tray", "updater", "window-all"] }
 aws-config = "0.52.0"
 
 tauri-plugin-stronghold = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
-tauri-plugin-clipboard = { git = "https://github.com/CrossCopy/tauri-plugin-clipboard-api", branch = "main" }
+# tauri-plugin-clipboard = { git = "https://github.com/CrossCopy/tauri-plugin-clipboard-api", branch = "main" }
+tauri-plugin-clipboard="0.0.2"
 imgurs = "0.11.1"
 aws-sdk-s3 = "0.22.0"
 aws-types = { version = "0.52.0", features = ["hardcoded-credentials"] }
