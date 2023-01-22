@@ -3,37 +3,40 @@
   import Navbar from '$lib/components/Navbar.svelte';
   import TitleBar from '$lib/components/TitleBar.svelte';
   import { toasts } from '$lib/store';
-  import { addToast } from '$lib/util';
   import { ToastType } from '$lib/types';
   import { Toast } from 'flowbite-svelte';
   import { slide } from 'svelte/transition';
-  import { curService, init as initStore } from '$lib/store';
-  import { register, isRegistered } from '@tauri-apps/api/globalShortcut';
-  import { appWindow } from '@tauri-apps/api/window';
+  import { curService, init as initStore, shortcutsMap } from '$lib/store';
+  import {
+    register,
+    isRegistered,
+    unregisterAll,
+  } from '@tauri-apps/api/globalShortcut';
+  import { onMount } from 'svelte';
+  import { toggleWindow } from '$lib/shortcut';
+  import { uploadFromClipboard } from '$lib/upload';
 
-  // addToast(ToastType.Success, 'success success success success success');
-  // setInterval(() => {
-  //   addToast(ToastType.Success, 'success');
-  // }, 3000);
+  async function initShortcuts() {
+    const toggleRegistered = await isRegistered($shortcutsMap.toggleWindow);
+    if (!toggleRegistered) {
+      await register($shortcutsMap.toggleWindow, toggleWindow);
+    }
 
-  initStore().then(() => {
-    console.log('Store Initialized');
-  });
-  $: console.log($curService?.type);
-
-  isRegistered('Control+Command+U').then((registered) => {
-    console.log(registered);
-    if (!registered) {
-      register('Control+Command+U', async () => {
-        const visible = await appWindow.isVisible();
-        if (visible) {
-          await appWindow.hide();
-        } else {
-          await appWindow.show();
-          await appWindow.setFocus()
-        }
+    const uploadRegistered = await isRegistered($shortcutsMap.upload);
+    if (!uploadRegistered) {
+      await register($shortcutsMap.upload, () => {
+        return uploadFromClipboard($curService).then(() => {
+          console.log('Upload Shortcut Registered');
+        });
       });
     }
+  }
+
+  onMount(async () => {
+    await unregisterAll();
+    await initStore();
+    console.log($shortcutsMap);
+    await initShortcuts();
   });
 </script>
 

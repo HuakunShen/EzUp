@@ -5,13 +5,10 @@
     NavLi,
     NavUl,
     NavHamburger,
-    Button,
-    Input,
   } from 'flowbite-svelte';
   import { page } from '$app/stores';
   import { isDev } from '$lib/util';
 </script>
-
 <Navbar let:hidden let:toggle>
   <NavBrand href="/">
     <img

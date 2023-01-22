@@ -2,11 +2,18 @@
   import ServicesDropdown from '$lib/components/ServicesDropdown.svelte';
   import ServiceListItem from '$lib/components/ServiceListItem.svelte';
   import ServiceSetting from '$lib/components/ServiceSetting.svelte';
-  import { List, Radio, Button } from 'flowbite-svelte';
+  import { List, Button } from 'flowbite-svelte';
   import { addToast, clearAllData } from '$lib/util';
   import { notify } from '$lib/notify';
-  import { services, selectedServiceId, serviceMap } from '$lib/store';
+  import {
+    services,
+    selectedServiceId,
+    shortcutsMap,
+    curService,
+  } from '$lib/store';
   import { ToastType } from '$lib/types';
+  import { register, unregister } from '@tauri-apps/api/globalShortcut';
+  import { uploadFromClipboard } from '$lib/upload';
 
   let group: string | undefined =
     $services.length === 0 ? undefined : $services[0].id;
@@ -14,13 +21,17 @@
     // update radio button selection when a new service is added
     group = x;
   });
-  function changeSelection(id: string) {
+  async function changeSelection(id: string) {
     const _selected = $services.find((x) => x.id === id);
     if (!_selected) {
       console.error(`Unexpected Error, Cannot Find Service with id=${id}`);
       return;
     }
     selectedServiceId.set(_selected.id);
+    await unregister($shortcutsMap.upload);
+    await register($shortcutsMap.upload, () => {
+      return uploadFromClipboard($curService);
+    });
   }
   async function clearServices() {
     // selectedServiceId.set(undefined);
