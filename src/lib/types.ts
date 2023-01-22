@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import { ServiceTypes } from './constants';
 
+export const ShortcutsSchema = z.object({
+  toggleWindow: z.string(),
+  upload: z.string(),
+});
+export type ShortcutsMap = ReturnType<typeof ShortcutsSchema.parse>;
+
 export const ImgurSettingSchema = z.object({
   clientId: z.string(),
 });
