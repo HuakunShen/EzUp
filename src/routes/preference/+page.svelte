@@ -15,52 +15,22 @@
     Li,
     Heading,
     List,
+    Button,
+    Kbd,
   } from 'flowbite-svelte';
-  import {
-    isPermissionGranted,
-    requestPermission,
-  } from '@tauri-apps/api/notification';
-  async function getNotificationPermission() {
-    let permissionGranted = await isPermissionGranted();
-    console.log('permissionGranted', permissionGranted);
+  import HotkeySelection from '$lib/components/HotkeySelection.svelte';
+  import { onMount } from 'svelte';
 
-    if (!permissionGranted) {
-      const permission = await requestPermission();
-      console.log('permission', permission);
+  let activeKey = '';
+  let toggleHotkeySelection: HotkeySelection;
+  let toggleHotkeyValue: string;
+  let uploadHotkeySelection: HotkeySelection;
+  let uploadHotkeyValue: string;
 
-      permissionGranted = permission === 'granted';
-      console.log('permissionGranted', permissionGranted);
-    }
-  }
-  getNotificationPermission();
-  // isPermissionGranted()
-  //   .then((isGranted?: boolean) => {
-  //     if (!isGranted) {
-  //       return requestPermission();
-  //     } else {
-  //       return Promise.resolve();
-  //     }
-  //   })
-  //   .then((granted) => {
-  //     console.log("granted", granted);
-  //   });
-
-  // Create the `$APPDATA/users` directory
-  // console.log(BaseDirectory.AppData);
-  // writeTextFile('ezup.conf', 'file contents', { dir: BaseDirectory.Desktop });
-  // await createDir('users', { dir: BaseDirectory.AppData, recursive: true });
-  // register("CommandOrControl+Shift+C", () => {
-  //   console.log("Shortcut triggered");
-  // }).then(() => {
-  //   console.log("registered");
-  // });
-  // isRegistered("CommandOrControl+C").then((reg) => {
-  //   console.log(reg);
-  // });
-  // (async () => {
-  //   const isRegistered = await isRegistered("CommandOrControl+P");
-  //   console.log(isRegistered);
-  // })();
+  onMount(() => {
+    toggleHotkeyValue = 'Control+Command+U';
+    uploadHotkeyValue = 'Command+Alt+U';
+  });
 </script>
 
 <div class="text-left w-full">
@@ -74,15 +44,46 @@
       <TableBodyRow>
         <TableBodyCell>Toggle Window</TableBodyCell>
         <TableBodyCell>
-          Control+Command+U
+          <!-- Control+Command+U -->
+          <HotkeySelection
+            key="toggle"
+            bind:activeKey
+            bind:this={toggleHotkeySelection}
+            bind:keyCombination={toggleHotkeyValue}
+          />
+          <Kbd class="px-2 py-1.5 mr-1">{toggleHotkeyValue}</Kbd>
+          <Button
+            size="xs"
+            on:click={() =>
+              (activeKey = activeKey === 'toggle' ? '' : 'toggle')}
+          >
+            {activeKey === 'toggle' ? 'End' : 'Start'}
+          </Button>
         </TableBodyCell>
       </TableBodyRow>
       <TableBodyRow>
         <TableBodyCell>Upload</TableBodyCell>
         <TableBodyCell>
-          Command+Alt+U
+          <!-- Command+Alt+U -->
+          <HotkeySelection
+            key="upload"
+            bind:activeKey
+            bind:this={uploadHotkeySelection}
+            bind:keyCombination={uploadHotkeyValue}
+          />
+          <Kbd class="px-2 py-1.5 mr-1">{uploadHotkeyValue}</Kbd>
+          <Button
+            size="xs"
+            on:click={() =>
+              (activeKey = activeKey === 'upload' ? '' : 'upload')}
+          >
+            {activeKey === 'upload' ? 'End' : 'Start'}
+          </Button>
         </TableBodyCell>
       </TableBodyRow>
     </TableBody>
   </Table>
+  {activeKey}
+  <!-- <HotkeySelection bind:this={toggleHotkeySelection}/>
+  <button on:click={() => toggleHotkeySelection.start()}>Start</button> -->
 </div>

@@ -96,3 +96,14 @@ export async function clearAllData() {
 export function isDev(): boolean {
   return process.env.NODE_ENV == 'development';
 }
+
+
+export function isLetter(letter: string): boolean {
+  if (letter.length != 1) return false;
+  return letter.match(/[a-zA-Z]/) ? true : false;
+}
+
+export function isShortcut(letters: string[]): boolean {
+  if (letters.length <= 1 || letters.length > 3) return false;
+  return letters.filter((letter) => isLetter(letter)).length == 1;
+}
