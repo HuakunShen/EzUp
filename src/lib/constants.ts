@@ -5,4 +5,5 @@ export enum ServiceTypes {
 
 export const KeyServices = 'services';
 export const KeyCurSerivce = 'curService';
-export const KeySelectedServiceId = 'curServiceId'
+export const KeySelectedServiceId = 'curServiceId';
+export const KeyShortcuts = 'shortcuts';

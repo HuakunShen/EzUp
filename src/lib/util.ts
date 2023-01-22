@@ -5,7 +5,8 @@ import type {
   ServiceSetting,
   ServiceType,
   ToastType,
-} from './types';
+  ShortcutsMap,
+} from '$lib/types';
 import {
   settingStore,
   dataStore,
@@ -13,7 +14,6 @@ import {
   selectedServiceId,
   logImagesUrls,
 } from '$lib/store';
-
 import { toasts } from '$lib/store';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
@@ -24,6 +24,11 @@ export const emptyS3Setting = (): S3Setting => ({
   accessKey: '',
   secretKey: '',
   prefix: '',
+});
+
+export const defaultShortcutsMap = (): ShortcutsMap => ({
+  toggleWindow: 'Control+Command+U',
+  upload: 'Command+Alt+U',
 });
 
 export const emptyImgurSetting = (): ImgurSetting => ({
@@ -96,7 +101,6 @@ export async function clearAllData() {
 export function isDev(): boolean {
   return process.env.NODE_ENV == 'development';
 }
-
 
 export function isLetter(letter: string): boolean {
   if (letter.length != 1) return false;
