@@ -1,0 +1,118 @@
+import type { ImgurSetting, S3Setting } from '$lib/types';
+import { addToast, addImageUrlToDisplay } from '$lib/util';
+import path from 'path-browserify';
+import { invoke } from '@tauri-apps/api';
+import { writeText, readText } from '@tauri-apps/api/clipboard';
+import { ToastType, ServiceTypesEnum } from '$lib/types';
+import { notify } from '$lib/notify';
+import { uploading, curService } from '$lib/store';
+import { cacheDir, configDir } from '@tauri-apps/api/path';
+import {
+  BaseDirectory,
+  createDir,
+  removeFile,
+  writeBinaryFile,
+} from '@tauri-apps/api/fs';
+import type { Service, Toast, ServiceType } from './types';
+
+export function uploadS3(s3Setting: S3Setting, url: string) {
+  const now = new Date();
+  const year = now.getUTCFullYear(),
+    month = now.getUTCMonth() + 1,
+    date = now.getUTCDate();
+  let key = `${s3Setting.prefix.replace(
+    /^\/|\/$/g,
+    ''
+  )}/${year}/${month}/${date}/${path.basename(url)}`;
+  if (key.length > 0 && key[0] === '/') {
+    key = key.substring(1);
+  }
+  return invoke('upload_s3', {
+    region: s3Setting.region,
+    bucket: s3Setting.bucket,
+    filename: url,
+    key: key,
+    accessKeyId: s3Setting.accessKey,
+    secretAccessKey: s3Setting.secretKey,
+  })
+    .then((res) => {
+      addImageUrlToDisplay(res as string);
+      return writeText(res as string);
+    })
+    .then(() => {
+      uploading.set(false);
+      addToast(ToastType.Success, 'Image URL Written to Clipboard');
+      return notify('Success', 'Image URL Written to Clipboard');
+    })
+    .catch((err) => {
+      addToast(ToastType.Error, err);
+      return notify('Error', err);
+      // uploading = false;
+    });
+}
+
+function uploadImg(url: string, service?: Service) {
+  if (service?.type === ServiceTypesEnum.Enum.imgur) {
+    const imgurSetting = service?.setting as ImgurSetting;
+    console.log(imgurSetting);
+    return invoke('upload_imgur_from_url', {
+      url: url,
+      clientId: imgurSetting.clientId,
+    })
+      .then((response: any) => {
+        uploading.set(false);
+        if (response) {
+          const url = response.data.link as string;
+          addImageUrlToDisplay(url);
+          return writeText(url);
+        } else {
+          // TODO: Error
+          throw new Error('Unhandled Error');
+        }
+      })
+      .then(() => {
+        addToast(ToastType.Success, 'Image URL Written to Clipboard');
+        return notify('Success', 'Image URL Written to Clipboard');
+      })
+      .catch((err) => {
+        console.error(err);
+        addToast(ToastType.Error, err);
+        return notify('Error', err);
+      });
+  } else if (service?.type === ServiceTypesEnum.Enum.s3) {
+    uploading.set(true);
+    console.log(path.basename(url));
+    const s3Setting = service?.setting as S3Setting;
+    console.log(s3Setting);
+    if (url.match(/^https?:\/\/.+/)) {
+      return cacheDir()
+        .then((cacheDir) => {
+          const destDir = path.join(cacheDir, 'ezup', 'download_url');
+          return createDir(destDir, {
+            dir: BaseDirectory.Cache,
+            recursive: true,
+          }).then(() => invoke('download_file', { url: url, destDir }));
+        })
+        .then((filePath) => {
+          if (filePath instanceof String || typeof filePath === 'string') {
+            return uploadS3(s3Setting, filePath as string).then(() => {
+              // remove the downloaded file
+              return removeFile(filePath as string, {
+                dir: BaseDirectory.Cache,
+              });
+            });
+          } else {
+            throw new Error(
+              'Unexpected File Path Type from invoke("download_file")'
+            );
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+    return uploadS3(s3Setting, url);
+  } else {
+    return Promise.reject('Service Not Supported');
+  }
+}

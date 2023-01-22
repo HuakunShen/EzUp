@@ -7,7 +7,7 @@
   import { addToast, addImageUrlToDisplay } from '$lib/util';
   import { ToastType, ServiceTypesEnum } from '$lib/types';
   import type { ImgurSetting, S3Setting } from '$lib/types';
-  import { curService } from '$lib/store';
+  import { curService, uploading } from '$lib/store';
   import { notify } from '$lib/notify';
   import {
     BaseDirectory,
@@ -19,49 +19,7 @@
   import path from 'path-browserify';
   import { v4 as uuid } from 'uuid';
   import { register, isRegistered } from '@tauri-apps/api/globalShortcut';
-
-  let uploading: boolean = false;
-  let progress = 0;
-
-  // setInterval(() => {
-  //   console.log($curService);
-  // }, 1000)
-
-  function uploadS3(s3Setting: S3Setting, url: string) {
-    const now = new Date();
-    const year = now.getUTCFullYear(),
-      month = now.getUTCMonth() + 1,
-      date = now.getUTCDate();
-    let key = `${s3Setting.prefix.replace(
-      /^\/|\/$/g,
-      ''
-    )}/${year}/${month}/${date}/${path.basename(url)}`;
-    if (key.length > 0 && key[0] === '/') {
-      key = key.substring(1);
-    }
-    return invoke('upload_s3', {
-      region: s3Setting.region,
-      bucket: s3Setting.bucket,
-      filename: url,
-      key: key,
-      accessKeyId: s3Setting.accessKey,
-      secretAccessKey: s3Setting.secretKey,
-    })
-      .then((res) => {
-        addImageUrlToDisplay(res as string);
-        return writeText(res as string);
-      })
-      .then(() => {
-        uploading = false;
-        addToast(ToastType.Success, 'Image URL Written to Clipboard');
-        return notify('Success', 'Image URL Written to Clipboard');
-      })
-      .catch((err) => {
-        addToast(ToastType.Error, err);
-        return notify('Error', err);
-        uploading = false;
-      });
-  }
+  import { uploadS3 } from '$lib/upload';
 
   function uploadImg(url: string) {
     if ($curService?.type === ServiceTypesEnum.Enum.imgur) {
@@ -72,9 +30,7 @@
         clientId: imgurSetting.clientId,
       })
         .then((response: any) => {
-          console.log(response);
-
-          uploading = false;
+          uploading.set(false);
           if (response) {
             const url = response.data.link as string;
             addImageUrlToDisplay(url);
@@ -92,13 +48,9 @@
           console.error(err);
           addToast(ToastType.Error, err);
           return notify('Error', err);
-          uploading = false;
         });
     } else if ($curService?.type === ServiceTypesEnum.Enum.s3) {
-      console.log('upload s3');
-      console.log(url);
-
-      uploading = true;
+      uploading.set(true);
       console.log(path.basename(url));
       const s3Setting = $curService?.setting as S3Setting;
       console.log(s3Setting);
@@ -136,13 +88,13 @@
   }
 
   function uploadClicked(event: any) {
-    uploading = true;
+    uploading.set(true);
     return uploadImg(event.detail.url);
   }
 
   async function uploadFromClipboard() {
     const clipboardText = await readText();
-    uploading = true;
+    uploading.set(true);
     // console.log('$curService', $curService);
     // console.log($curService?.type);
 
@@ -180,7 +132,6 @@
           console.error(err);
           addToast(ToastType.Error, err);
           return notify('Error', err);
-          uploading = false;
         });
     }
   }
@@ -244,7 +195,7 @@
     <br />
     <div class="w-full">
       <Heading class="mb-2" tag="h4">File URL To Upload</Heading>
-      <UploadURL {uploading} on:upload={uploadClicked} />
+      <UploadURL uploading={$uploading} on:upload={uploadClicked} />
     </div>
   </div>
 </div>
