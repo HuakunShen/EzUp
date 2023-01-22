@@ -1,26 +1,15 @@
 <script lang="ts">
   import DropUpload from '$lib/components/DropUpload.svelte';
   import UploadURL from '$lib/components/UploadURL.svelte';
-  import { Heading, Progressbar, Button } from 'flowbite-svelte';
-  import { invoke } from '@tauri-apps/api';
-  import { writeText, readText } from '@tauri-apps/api/clipboard';
-  import { addToast, addImageUrlToDisplay } from '$lib/util';
-  import { ToastType, ServiceTypesEnum } from '$lib/types';
-  import type { ImgurSetting, S3Setting } from '$lib/types';
-  import { curService, uploading, shortcutsMap } from '$lib/store';
+  import { Heading, Button } from 'flowbite-svelte';
+  import { addToast } from '$lib/util';
+  import { ToastType } from '$lib/types';
+  import { curService, uploading } from '$lib/store';
   import { notify } from '$lib/notify';
-  import {
-    BaseDirectory,
-    createDir,
-    removeFile,
-    writeBinaryFile,
-  } from '@tauri-apps/api/fs';
-  import { cacheDir, configDir } from '@tauri-apps/api/path';
+  import { BaseDirectory, writeBinaryFile } from '@tauri-apps/api/fs';
+  import { cacheDir } from '@tauri-apps/api/path';
   import path from 'path-browserify';
-  import { v4 as uuid } from 'uuid';
-  import { register, isRegistered } from '@tauri-apps/api/globalShortcut';
-  import { uploadS3, uploadImg, uploadFromClipboard } from '$lib/upload';
-  import { onMount } from 'svelte';
+  import { uploadImg, uploadFromClipboard } from '$lib/upload';
 
   function uploadClicked(event: any) {
     uploading.set(true);

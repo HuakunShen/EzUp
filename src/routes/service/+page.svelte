@@ -2,22 +2,17 @@
   import ServicesDropdown from '$lib/components/ServicesDropdown.svelte';
   import ServiceListItem from '$lib/components/ServiceListItem.svelte';
   import ServiceSetting from '$lib/components/ServiceSetting.svelte';
-  import { List, Radio, Button } from 'flowbite-svelte';
+  import { List, Button } from 'flowbite-svelte';
   import { addToast, clearAllData } from '$lib/util';
   import { notify } from '$lib/notify';
   import {
     services,
     selectedServiceId,
-    serviceMap,
     shortcutsMap,
     curService,
   } from '$lib/store';
   import { ToastType } from '$lib/types';
-  import {
-    register,
-    isRegistered,
-    unregister,
-  } from '@tauri-apps/api/globalShortcut';
+  import { register, unregister } from '@tauri-apps/api/globalShortcut';
   import { uploadFromClipboard } from '$lib/upload';
 
   let group: string | undefined =

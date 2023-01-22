@@ -12,10 +12,9 @@
     isRegistered,
     unregisterAll,
   } from '@tauri-apps/api/globalShortcut';
-  import { appWindow } from '@tauri-apps/api/window';
   import { onMount } from 'svelte';
   import { toggleWindow } from '$lib/shortcut';
-  import { uploadS3, uploadImg, uploadFromClipboard } from '$lib/upload';
+  import { uploadFromClipboard } from '$lib/upload';
 
   async function initShortcuts() {
     const toggleRegistered = await isRegistered($shortcutsMap.toggleWindow);

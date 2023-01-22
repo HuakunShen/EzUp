@@ -5,15 +5,10 @@ import { invoke } from '@tauri-apps/api';
 import { writeText, readText } from '@tauri-apps/api/clipboard';
 import { ToastType, ServiceTypesEnum } from '$lib/types';
 import { notify } from '$lib/notify';
-import { uploading, curService } from '$lib/store';
-import { cacheDir, configDir } from '@tauri-apps/api/path';
-import {
-  BaseDirectory,
-  createDir,
-  removeFile,
-  writeBinaryFile,
-} from '@tauri-apps/api/fs';
-import type { Service, Toast, ServiceType } from './types';
+import { uploading } from '$lib/store';
+import { cacheDir } from '@tauri-apps/api/path';
+import { BaseDirectory, createDir, removeFile } from '@tauri-apps/api/fs';
+import type { Service } from './types';
 import { v4 as uuid } from 'uuid';
 
 export function uploadS3(s3Setting: S3Setting, url: string) {
@@ -123,8 +118,6 @@ export function uploadImg(url: string, service?: Service) {
 export async function uploadFromClipboard(service?: Service) {
   const clipboardText = await readText();
   uploading.set(true);
-  // console.log('$curService', $curService);
-  // console.log($curService?.type);
 
   if (!!clipboardText) {
     return uploadImg(clipboardText, service);
