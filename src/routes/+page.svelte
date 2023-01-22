@@ -7,7 +7,7 @@
   import { addToast, addImageUrlToDisplay } from '$lib/util';
   import { ToastType, ServiceTypesEnum } from '$lib/types';
   import type { ImgurSetting, S3Setting } from '$lib/types';
-  import { curService, uploading } from '$lib/store';
+  import { curService, uploading, shortcutsMap } from '$lib/store';
   import { notify } from '$lib/notify';
   import {
     BaseDirectory,
@@ -20,6 +20,7 @@
   import { v4 as uuid } from 'uuid';
   import { register, isRegistered } from '@tauri-apps/api/globalShortcut';
   import { uploadS3, uploadImg, uploadFromClipboard } from '$lib/upload';
+  import { onMount } from 'svelte';
 
   function uploadClicked(event: any) {
     uploading.set(true);
@@ -47,20 +48,34 @@
     reader.readAsArrayBuffer(file);
   }
 
-  isRegistered('CommandOrControl+Alt+U')
-    .then((registered) => {
-      if (!registered) {
-        return register('CommandOrControl+Alt+U', () => {
-          return uploadFromClipboard($curService);
-        }).then(() => {
-          console.log('Upload Shortcut Registered');
-        });
-      }
-    })
-    .catch((err) => {
-      console.error('Failed to register shortcut keys');
-      console.error(err);
-    });
+  onMount(async () => {
+    // const registered = await isRegistered($shortcutsMap.upload);
+    // if (!registered) {
+    //   await register($shortcutsMap.upload, () => {
+    //     return uploadFromClipboard($curService);
+    //   }).then(() => {
+    //     console.log('Upload Shortcut Registered');
+    //   });
+    // }
+    // .catch((err) => {
+    //   console.error('Failed to register shortcut keys');
+    //   console.error(err);
+    // });
+  });
+  // isRegistered('CommandOrControl+Alt+U')
+  //   .then((registered) => {
+  //     if (!registered) {
+  //       return register('CommandOrControl+Alt+U', () => {
+  //         return uploadFromClipboard($curService);
+  //       }).then(() => {
+  //         console.log('Upload Shortcut Registered');
+  //       });
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     console.error('Failed to register shortcut keys');
+  //     console.error(err);
+  //   });
 </script>
 
 <div class="flex justify-center">
