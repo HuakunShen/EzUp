@@ -22,8 +22,6 @@
   const keyDownMap = new Map();
 
   const updatePressedKeys = () => {
-    console.log('update');
-
     curKeyCombinationArr = [];
     keyDownMap.forEach((value, key, map) => {
       if (value) curKeyCombinationArr.push(key);

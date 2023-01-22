@@ -47,35 +47,6 @@
     };
     reader.readAsArrayBuffer(file);
   }
-
-  onMount(async () => {
-    // const registered = await isRegistered($shortcutsMap.upload);
-    // if (!registered) {
-    //   await register($shortcutsMap.upload, () => {
-    //     return uploadFromClipboard($curService);
-    //   }).then(() => {
-    //     console.log('Upload Shortcut Registered');
-    //   });
-    // }
-    // .catch((err) => {
-    //   console.error('Failed to register shortcut keys');
-    //   console.error(err);
-    // });
-  });
-  // isRegistered('CommandOrControl+Alt+U')
-  //   .then((registered) => {
-  //     if (!registered) {
-  //       return register('CommandOrControl+Alt+U', () => {
-  //         return uploadFromClipboard($curService);
-  //       }).then(() => {
-  //         console.log('Upload Shortcut Registered');
-  //       });
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     console.error('Failed to register shortcut keys');
-  //     console.error(err);
-  //   });
 </script>
 
 <div class="flex justify-center">

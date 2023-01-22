@@ -26,9 +26,9 @@
     const uploadRegistered = await isRegistered($shortcutsMap.upload);
     if (!uploadRegistered) {
       await register($shortcutsMap.upload, () => {
-        return uploadFromClipboard($curService);
-      }).then(() => {
-        console.log('Upload Shortcut Registered');
+        return uploadFromClipboard($curService).then(() => {
+          console.log('Upload Shortcut Registered');
+        });
       });
     }
   }
