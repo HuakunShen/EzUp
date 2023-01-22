@@ -14,8 +14,10 @@ import {
   writeBinaryFile,
 } from '@tauri-apps/api/fs';
 import type { Service, Toast, ServiceType } from './types';
+import { v4 as uuid } from 'uuid';
 
 export function uploadS3(s3Setting: S3Setting, url: string) {
+  console.log('uploadS3');
   const now = new Date();
   const year = now.getUTCFullYear(),
     month = now.getUTCMonth() + 1,
@@ -41,6 +43,7 @@ export function uploadS3(s3Setting: S3Setting, url: string) {
     })
     .then(() => {
       uploading.set(false);
+      console.log('add toast');
       addToast(ToastType.Success, 'Image URL Written to Clipboard');
       return notify('Success', 'Image URL Written to Clipboard');
     })
@@ -51,7 +54,7 @@ export function uploadS3(s3Setting: S3Setting, url: string) {
     });
 }
 
-function uploadImg(url: string, service?: Service) {
+export function uploadImg(url: string, service?: Service) {
   if (service?.type === ServiceTypesEnum.Enum.imgur) {
     const imgurSetting = service?.setting as ImgurSetting;
     console.log(imgurSetting);
@@ -114,5 +117,49 @@ function uploadImg(url: string, service?: Service) {
     return uploadS3(s3Setting, url);
   } else {
     return Promise.reject('Service Not Supported');
+  }
+}
+
+export async function uploadFromClipboard(service?: Service) {
+  const clipboardText = await readText();
+  uploading.set(true);
+  // console.log('$curService', $curService);
+  // console.log($curService?.type);
+
+  if (!!clipboardText) {
+    return uploadImg(clipboardText, service);
+  } else {
+    const filename = `${uuid()}.png`;
+    const cachePath = await cacheDir();
+    // console.log(cachePath);
+    const clipboardImgPath = path.join(
+      cachePath,
+      'ezup',
+      'clipboard-images',
+      filename
+    );
+    await createDir('ezup/clipboard-images', {
+      dir: BaseDirectory.Cache,
+      recursive: true,
+    });
+    return invoke('image_to_file', {
+      filename: clipboardImgPath,
+    })
+      .then(() => {
+        // addToast(ToastType.Success, 'Clipboard Image Saved To FS');
+        // uploading = false;
+        return uploadImg(clipboardImgPath, service);
+      })
+      .then(() => {
+        // Remove Cached File
+        return removeFile(clipboardImgPath, {
+          dir: BaseDirectory.Cache,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        addToast(ToastType.Error, err);
+        return notify('Error', err);
+      });
   }
 }

@@ -19,121 +19,11 @@
   import path from 'path-browserify';
   import { v4 as uuid } from 'uuid';
   import { register, isRegistered } from '@tauri-apps/api/globalShortcut';
-  import { uploadS3 } from '$lib/upload';
-
-  function uploadImg(url: string) {
-    if ($curService?.type === ServiceTypesEnum.Enum.imgur) {
-      const imgurSetting = $curService?.setting as ImgurSetting;
-      console.log(imgurSetting);
-      return invoke('upload_imgur_from_url', {
-        url: url,
-        clientId: imgurSetting.clientId,
-      })
-        .then((response: any) => {
-          uploading.set(false);
-          if (response) {
-            const url = response.data.link as string;
-            addImageUrlToDisplay(url);
-            return writeText(url);
-          } else {
-            // TODO: Error
-            throw new Error('Unhandled Error');
-          }
-        })
-        .then(() => {
-          addToast(ToastType.Success, 'Image URL Written to Clipboard');
-          return notify('Success', 'Image URL Written to Clipboard');
-        })
-        .catch((err) => {
-          console.error(err);
-          addToast(ToastType.Error, err);
-          return notify('Error', err);
-        });
-    } else if ($curService?.type === ServiceTypesEnum.Enum.s3) {
-      uploading.set(true);
-      console.log(path.basename(url));
-      const s3Setting = $curService?.setting as S3Setting;
-      console.log(s3Setting);
-      if (url.match(/^https?:\/\/.+/)) {
-        return cacheDir()
-          .then((cacheDir) => {
-            const destDir = path.join(cacheDir, 'ezup', 'download_url');
-            return createDir(destDir, {
-              dir: BaseDirectory.Cache,
-              recursive: true,
-            }).then(() => invoke('download_file', { url: url, destDir }));
-          })
-          .then((filePath) => {
-            if (filePath instanceof String || typeof filePath === 'string') {
-              return uploadS3(s3Setting, filePath as string).then(() => {
-                // remove the downloaded file
-                return removeFile(filePath as string, {
-                  dir: BaseDirectory.Cache,
-                });
-              });
-            } else {
-              throw new Error(
-                'Unexpected File Path Type from invoke("download_file")'
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      }
-      return uploadS3(s3Setting, url);
-    } else {
-      return Promise.reject('Service Not Supported');
-    }
-  }
+  import { uploadS3, uploadImg, uploadFromClipboard } from '$lib/upload';
 
   function uploadClicked(event: any) {
     uploading.set(true);
-    return uploadImg(event.detail.url);
-  }
-
-  async function uploadFromClipboard() {
-    const clipboardText = await readText();
-    uploading.set(true);
-    // console.log('$curService', $curService);
-    // console.log($curService?.type);
-
-    if (!!clipboardText) {
-      return uploadImg(clipboardText);
-    } else {
-      const filename = `${uuid()}.png`;
-      const cachePath = await cacheDir();
-      // console.log(cachePath);
-      const clipboardImgPath = path.join(
-        cachePath,
-        'ezup',
-        'clipboard-images',
-        filename
-      );
-      await createDir('ezup/clipboard-images', {
-        dir: BaseDirectory.Cache,
-        recursive: true,
-      });
-      return invoke('image_to_file', {
-        filename: clipboardImgPath,
-      })
-        .then(() => {
-          // addToast(ToastType.Success, 'Clipboard Image Saved To FS');
-          // uploading = false;
-          return uploadImg(clipboardImgPath);
-        })
-        .then(() => {
-          // Remove Cached File
-          return removeFile(clipboardImgPath, {
-            dir: BaseDirectory.Cache,
-          });
-        })
-        .catch((err) => {
-          console.error(err);
-          addToast(ToastType.Error, err);
-          return notify('Error', err);
-        });
-    }
+    return uploadImg(event.detail.url, $curService);
   }
 
   function uploadThroughFileInput(file: File) {
@@ -147,7 +37,7 @@
         dir: BaseDirectory.Cache,
       })
         .then(() => {
-          return uploadImg(destPath);
+          return uploadImg(destPath, $curService);
         })
         .catch((err) => {
           addToast(ToastType.Error, err.toString());
@@ -161,7 +51,7 @@
     .then((registered) => {
       if (!registered) {
         return register('CommandOrControl+Alt+U', () => {
-          return uploadFromClipboard();
+          return uploadFromClipboard($curService);
         }).then(() => {
           console.log('Upload Shortcut Registered');
         });
@@ -187,7 +77,9 @@
     <div class="w-full">
       <!-- <Heading class="mb-2" tag="h4">Upload from Clipboard</Heading> -->
       <div class="text-center mt-5">
-        <Button on:click={uploadFromClipboard}>Upload from Clipboard</Button>
+        <Button on:click={() => uploadFromClipboard($curService)}
+          >Upload from Clipboard</Button
+        >
       </div>
     </div>
     <br />
