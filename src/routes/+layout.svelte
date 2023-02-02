@@ -15,6 +15,7 @@
   import { onMount } from 'svelte';
   import { toggleWindow } from '$lib/shortcut';
   import { uploadFromClipboard } from '$lib/upload';
+  import {platform} from '@tauri-apps/api/os';
 
   async function initShortcuts() {
     const toggleRegistered = await isRegistered($shortcutsMap.toggleWindow);
@@ -23,17 +24,22 @@
     }
 
     const uploadRegistered = await isRegistered($shortcutsMap.upload);
+    console.log(uploadRegistered);
+    
     if (!uploadRegistered) {
       await register($shortcutsMap.upload, () => {
         return uploadFromClipboard($curService).then(() => {
-          console.log('Upload Shortcut Registered');
+          console.log('Uploaded from clipboard');
         });
       });
     }
   }
 
   onMount(async () => {
-    await unregisterAll();
+    if (await platform() !== 'linux') {
+      // running unregisterAll on linux seems to prevent later shortcuts registration.
+      await unregisterAll();
+    }
     await initStore();
     console.log($shortcutsMap);
     await initShortcuts();
