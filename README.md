@@ -1,14 +1,35 @@
 # EzUp
 
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [EzUp](#-ezup)
+  - [Installation](#-installation)
+  - [Building](#-building)
+    - [MacOS](#-macos)
+  - [Updater](#-updater)
+
+<!-- /code_chunk_output -->
+
 Eazy Uploader is for easy image/file uploader.
 
 Here is some demo screenshots.
 
+<img src="https://hacker-storage.s3.us-east-2.amazonaws.com/2023/2/2/ezup-home.png" width="60%" />
+<details>
+<summary>More Images</summary>
 <div>
-    <img src="https://huakun-brain.s3.us-east-2.amazonaws.com/2023/1/16/8b5952f9-0e2b-4eab-b994-29916911cd0f.png" width="60%" />
-    <img src="https://huakun-brain.s3.us-east-2.amazonaws.com/2023/1/16/d84046a6-b213-4635-ac56-c649399f16df.png" width="60%" />
-    <img src="https://huakun-brain.s3.us-east-2.amazonaws.com/2023/1/16/8e044453-2dfc-4f43-be28-e2666f33e5d0.png" width="60%" />
+    <img src="https://hacker-storage.s3.us-east-2.amazonaws.com/2023/2/2/ezup-services.png" width="60%" />
+    <img src="https://hacker-storage.s3.us-east-2.amazonaws.com/2023/2/2/ezup-preference.png" width="60%" />
 </div>
+</details>
+
+## Installation
+
+Download from the latest release based on your platform.
+
+For Mac you should download the `*.app.gz` file for now. Uncompress it and run `xattr -cr EzUp.app` to unlock. This is because the author didn't pay apple tax.
 
 ## Building
 
@@ -29,7 +50,7 @@ For universal build on darwin, the following command is required.
 rustup target add x86_64-apple-darwin
 ```
 
-USe `npm run build:mac:universal` to build a darwin universal app.
+Use `npm run build:mac:universal` to build a darwin universal app.
 
 ## Updater
 
