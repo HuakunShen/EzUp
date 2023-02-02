@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "EzUp",
-    "version": "0.0.4"
+    "version": "0.1.2"
   },
   "tauri": {
     "macOSPrivateApi": true,
@@ -36,6 +36,9 @@
         "all": true
       },
       "path": {
+        "all": true
+      },
+      "os": {
         "all": true
       },
       "fs": {

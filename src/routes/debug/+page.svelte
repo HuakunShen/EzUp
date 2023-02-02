@@ -10,7 +10,7 @@
   } from '@tauri-apps/api/notification';
   import { readText, readImage } from 'tauri-plugin-clipboard-api';
   const store = new Store('settings-debug.json');
-
+  
   async function debug() {
     await notify('Hello');
     // readText().then((text) => {

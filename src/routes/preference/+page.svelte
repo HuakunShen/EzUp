@@ -55,7 +55,9 @@
         uploadWarning = '';
         shortcutsMap.update((m) => ({ ...m, upload: uploadHotkeyValue }));
         await register(uploadHotkeyValue, () => {
-          return uploadFromClipboard($curService);
+          return uploadFromClipboard($curService).then(() => {
+            console.log("uploaded from clipboard");
+          });
         });
       }
     }

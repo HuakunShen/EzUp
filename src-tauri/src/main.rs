@@ -18,7 +18,7 @@ use tauri::{CustomMenuItem, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemT
 use std::fs::File;
 use std::io::copy;
 // use tempfile::Builder;
-use std::borrow::Cow;
+// use std::borrow::Cow;
 use std::io::Cursor;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command

@@ -2751,6 +2751,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "os_info"
+version = "3.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c424bc68d15e0778838ac013b5b3449544d8133633d8016319e7e05a820b8c0"
+dependencies = [
+ "log",
+ "serde",
+ "winapi",
+]
+
+[[package]]
 name = "outref"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4072,6 +4083,7 @@ dependencies = [
  "objc",
  "once_cell",
  "open",
+ "os_info",
  "percent-encoding",
  "rand 0.8.5",
  "raw-window-handle",
@@ -4158,9 +4170,9 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-clipboard"
-version = "0.0.2"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8677784e1dc99e7e55a33240fcf6fbdf280451f305b773c7c75db1bc4a314abb"
+checksum = "c0952b2bdc383e0a96fad8be31e9c4ecb39c5b207a80d459511d1175baee4a8e"
 dependencies = [
  "arboard",
  "base64 0.21.0",
