@@ -6,7 +6,7 @@
   import { ToastType } from '$lib/types';
   import { Toast } from 'flowbite-svelte';
   import { slide } from 'svelte/transition';
-  import { curService, init as initStore, shortcutsMap } from '$lib/store';
+  import { curService, init as initStore, shortcutsMap, formatter } from '$lib/store';
   import {
     register,
     isRegistered,
@@ -28,7 +28,7 @@
     
     if (!uploadRegistered) {
       await register($shortcutsMap.upload, () => {
-        return uploadFromClipboard($curService).then(() => {
+        return uploadFromClipboard($formatter, $curService).then(() => {
           console.log('Uploaded from clipboard');
         });
       });
