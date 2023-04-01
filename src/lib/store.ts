@@ -8,9 +8,10 @@ import {
   KeyCurSerivce,
   KeySelectedServiceId,
   KeyShortcuts,
+  KeyFormatter,
 } from './constants';
 import { z, type Writeable } from 'zod';
-import { defaultShortcutsMap } from '$lib/util';
+import { defaultShortcutsMap, type FormatType, FormatEnum } from '$lib/util';
 
 // these stores are tauri stores, not svelte stores
 export const settingStore = new Store('settings.json');
@@ -21,6 +22,8 @@ export const services: Writable<Service[]> = writable([]);
 export const toasts: Writable<Toast[]> = writable([]);
 export const logImagesUrls: Writable<string[]> = writable([]);
 export const uploading: Writable<boolean> = writable(false);
+export const formatter: Writable<FormatType> = writable('plainlink');
+// export const formatter: Writable<FormatType> = writable(FormatEnum.enum.plainLink);
 export const selectedServiceId: Writable<string | undefined> =
   writable(undefined);
 export const shortcutsMap: Writable<ShortcutsMap> = writable();
@@ -75,6 +78,22 @@ export async function init() {
     // console.log(value);
     // localStorage.setItem(KeySelectedServiceId, JSON.stringify(value));
     await settingStore.set(KeySelectedServiceId, value || null);
+    await settingStore.save();
+  });
+
+  // formatter init
+  const rawFormatter = await settingStore.get<FormatType>(KeyFormatter);
+  // console.log(rawFormatter);
+  let format: FormatType = FormatEnum.enum.plainlink;
+  try {
+    format = FormatEnum.parse(rawFormatter);
+  } catch (error) {
+    await settingStore.set(KeyFormatter, FormatEnum.enum.plainlink);
+    await settingStore.save();
+  }
+  formatter.set(format);
+  formatter.subscribe(async (value) => {
+    await settingStore.set(KeyFormatter, value);
     await settingStore.save();
   });
 }

@@ -10,6 +10,7 @@
     selectedServiceId,
     shortcutsMap,
     curService,
+    formatter,
   } from '$lib/store';
   import { ToastType } from '$lib/types';
   import { register, unregister } from '@tauri-apps/api/globalShortcut';
@@ -30,7 +31,7 @@
     selectedServiceId.set(_selected.id);
     await unregister($shortcutsMap.upload);
     await register($shortcutsMap.upload, () => {
-      return uploadFromClipboard($curService);
+      return uploadFromClipboard($formatter, $curService);
     });
   }
   async function clearServices() {

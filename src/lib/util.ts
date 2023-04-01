@@ -1,4 +1,5 @@
 import { ServiceTypes } from './constants';
+import {z} from 'zod';
 import type {
   ImgurSetting,
   S3Setting,
@@ -110,4 +111,38 @@ export function isLetter(letter: string): boolean {
 export function isShortcut(letters: string[]): boolean {
   if (letters.length <= 1 || letters.length > 3) return false;
   return letters.filter((letter) => isLetter(letter)).length == 1;
+}
+
+export const FormatTypeArr = ['markdown', 'html', 'plainlink'] as const;
+export const FormatEnum = z.enum(FormatTypeArr);
+export type FormatType = z.infer<typeof FormatEnum>;
+// export enum FormatTypeEnum {
+//   Markdown = 'markdown',
+//   HTML = 'html',
+//   PlainLink = 'plainLink',
+// }
+
+// export type FormatType = FormatTypeEnum.Markdown | FormatTypeEnum.HTML | FormatTypeEnum.PlainLink;
+
+export class ImageLinkFormatter {
+  static md_format(url: string): string {
+    return `![image](${url})`;
+  }
+
+  static html_format(url: string): string {
+    return `<img src="${url}" width="100%" />`;
+  }
+
+  static format(format: FormatType, url: string): string {
+    switch (format) {
+      case FormatEnum.enum.markdown:
+        return this.md_format(url);
+      case FormatEnum.enum.html:
+        return this.html_format(url);
+      case FormatEnum.enum.plainlink:
+        return url;
+      default:
+        throw new Error('Unknown Format Type');
+    }
+  }
 }

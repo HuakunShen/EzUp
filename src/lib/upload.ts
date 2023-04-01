@@ -1,18 +1,27 @@
 import type { ImgurSetting, S3Setting } from '$lib/types';
-import { addToast, addImageUrlToDisplay } from '$lib/util';
+import {
+  addToast,
+  addImageUrlToDisplay,
+  ImageLinkFormatter,
+  type FormatType,
+} from '$lib/util';
 import path from 'path-browserify';
 import { invoke } from '@tauri-apps/api';
 import { writeText, readText } from '@tauri-apps/api/clipboard';
 import { ToastType, ServiceTypesEnum } from '$lib/types';
 import { notify } from '$lib/notify';
-import { uploading } from '$lib/store';
+import { uploading, formatter } from '$lib/store';
 import { cacheDir } from '@tauri-apps/api/path';
 import { BaseDirectory, createDir, removeFile } from '@tauri-apps/api/fs';
 import type { Service } from './types';
 import { v4 as uuid } from 'uuid';
 
-export function uploadS3(s3Setting: S3Setting, url: string) {
-  console.log('uploadS3');
+export function uploadS3(
+  s3Setting: S3Setting,
+  url: string,
+  format: FormatType
+) {
+  // console.log('uploadS3');
   const now = new Date();
   const year = now.getUTCFullYear(),
     month = now.getUTCMonth() + 1,
@@ -33,8 +42,9 @@ export function uploadS3(s3Setting: S3Setting, url: string) {
     secretAccessKey: s3Setting.secretKey,
   })
     .then((res) => {
-      addImageUrlToDisplay(res as string);
-      return writeText(res as string);
+      const url = res as string;
+      addImageUrlToDisplay(url);
+      return writeText(ImageLinkFormatter.format(format, url));
     })
     .then(() => {
       uploading.set(false);
@@ -49,7 +59,9 @@ export function uploadS3(s3Setting: S3Setting, url: string) {
     });
 }
 
-export function uploadImg(url: string, service?: Service) {
+export function uploadImg(url: string, format: FormatType, service?: Service) {
+  console.log(service?.type);
+  
   if (service?.type === ServiceTypesEnum.Enum.imgur) {
     const imgurSetting = service?.setting as ImgurSetting;
     console.log(imgurSetting);
@@ -62,7 +74,7 @@ export function uploadImg(url: string, service?: Service) {
         if (response) {
           const url = response.data.link as string;
           addImageUrlToDisplay(url);
-          return writeText(url);
+          return writeText(ImageLinkFormatter.format(format, url));
         } else {
           // TODO: Error
           throw new Error('Unhandled Error');
@@ -93,7 +105,7 @@ export function uploadImg(url: string, service?: Service) {
         })
         .then((filePath) => {
           if (filePath instanceof String || typeof filePath === 'string') {
-            return uploadS3(s3Setting, filePath as string).then(() => {
+            return uploadS3(s3Setting, filePath as string, format).then(() => {
               // remove the downloaded file
               return removeFile(filePath as string, {
                 dir: BaseDirectory.Cache,
@@ -109,18 +121,21 @@ export function uploadImg(url: string, service?: Service) {
           console.error(err);
         });
     }
-    return uploadS3(s3Setting, url);
+    return uploadS3(s3Setting, url, format);
   } else {
     return Promise.reject('Service Not Supported');
   }
 }
 
-export async function uploadFromClipboard(service?: Service) {
+export async function uploadFromClipboard(
+  format: FormatType,
+  service?: Service
+) {
   const clipboardText = await readText();
   uploading.set(true);
 
   if (!!clipboardText) {
-    return uploadImg(clipboardText, service);
+    return uploadImg(clipboardText, format, service);
   } else {
     const filename = `${uuid()}.png`;
     const cachePath = await cacheDir();
@@ -141,7 +156,7 @@ export async function uploadFromClipboard(service?: Service) {
       .then(() => {
         // addToast(ToastType.Success, 'Clipboard Image Saved To FS');
         // uploading = false;
-        return uploadImg(clipboardImgPath, service);
+        return uploadImg(clipboardImgPath, format, service);
       })
       .then(() => {
         // Remove Cached File

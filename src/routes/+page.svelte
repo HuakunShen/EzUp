@@ -4,7 +4,7 @@
   import { Heading, Button } from 'flowbite-svelte';
   import { addToast } from '$lib/util';
   import { ToastType } from '$lib/types';
-  import { curService, uploading } from '$lib/store';
+  import { curService, uploading, formatter } from '$lib/store';
   import { notify } from '$lib/notify';
   import { BaseDirectory, writeBinaryFile } from '@tauri-apps/api/fs';
   import { cacheDir } from '@tauri-apps/api/path';
@@ -13,7 +13,7 @@
 
   function uploadClicked(event: any) {
     uploading.set(true);
-    return uploadImg(event.detail.url, $curService);
+    return uploadImg(event.detail.url, $formatter, $curService);
   }
 
   function uploadThroughFileInput(file: File) {
@@ -27,7 +27,7 @@
         dir: BaseDirectory.Cache,
       })
         .then(() => {
-          return uploadImg(destPath, $curService);
+          return uploadImg(destPath, $formatter, $curService);
         })
         .catch((err) => {
           addToast(ToastType.Error, err.toString());
@@ -52,7 +52,7 @@
     <div class="w-full">
       <!-- <Heading class="mb-2" tag="h4">Upload from Clipboard</Heading> -->
       <div class="text-center mt-5">
-        <Button on:click={() => uploadFromClipboard($curService)}
+        <Button on:click={() => uploadFromClipboard($formatter, $curService)}
           >Upload from Clipboard</Button
         >
       </div>

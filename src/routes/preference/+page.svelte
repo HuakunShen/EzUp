@@ -13,9 +13,12 @@
     TableHeadCell,
     Button,
     Kbd,
+    Radio,
   } from 'flowbite-svelte';
   import HotkeySelection from '$lib/components/HotkeySelection.svelte';
-  import { shortcutsMap, curService } from '$lib/store';
+  import { shortcutsMap, curService, formatter } from '$lib/store';
+  import type { FormatType } from '$lib/util';
+  import { FormatEnum } from '$lib/util';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { toggleWindow } from '$lib/shortcut';
@@ -28,6 +31,7 @@
   let uploadHotkeyValue: string;
   let toggleWarning: string = '';
   let uploadWarning: string = '';
+  let format: FormatType = $formatter;
 
   onMount(() => {
     if (!$shortcutsMap) return goto('/');
@@ -55,17 +59,20 @@
         uploadWarning = '';
         shortcutsMap.update((m) => ({ ...m, upload: uploadHotkeyValue }));
         await register(uploadHotkeyValue, () => {
-          return uploadFromClipboard($curService).then(() => {
-            console.log("uploaded from clipboard");
+          return uploadFromClipboard($formatter, $curService).then(() => {
+            console.log('uploaded from clipboard');
           });
         });
       }
     }
   })();
+
+  // Update format in store on update
+  $: formatter.set(format);
 </script>
 
 <div class="text-left w-full">
-  <h1 class="text-3xl">Preference</h1>
+  <h1 class="text-3xl mb-3">Preference</h1>
   <Table>
     <TableHead>
       <TableHeadCell>Command</TableHeadCell>
@@ -114,4 +121,24 @@
       </TableBodyRow>
     </TableBody>
   </Table>
+  <h1 class="text-3xl mb-3">Formatter</h1>
+  <ul
+    class="w-48 bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-600 divide-y divide-gray-200 dark:divide-gray-600"
+  >
+    <li>
+      <Radio class="p-3" bind:group={format} value={FormatEnum.enum.plainlink}
+        >Plain Link</Radio
+      >
+    </li>
+    <li>
+      <Radio class="p-3" bind:group={format} value={FormatEnum.enum.markdown}
+        >Markdown</Radio
+      >
+    </li>
+    <li>
+      <Radio class="p-3" bind:group={format} value={FormatEnum.enum.html}
+        >HTML</Radio
+      >
+    </li>
+  </ul>
 </div>

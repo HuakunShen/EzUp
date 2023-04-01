@@ -7,3 +7,4 @@ export const KeyServices = 'services';
 export const KeyCurSerivce = 'curService';
 export const KeySelectedServiceId = 'curServiceId';
 export const KeyShortcuts = 'shortcuts';
+export const KeyFormatter = 'formatter';
