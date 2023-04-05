@@ -19,6 +19,7 @@
     "@types/path-browserify": "^1.0.0",
     "lodash": "^4.17.21",
     "path-browserify": "^1.0.1",
+    "svelte-tauri-filedrop": "^1.0.0",
     "tauri-plugin-clipboard-api": "^0.2.4",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "uuid": "^9.0.0",
