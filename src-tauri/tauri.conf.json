@@ -18,12 +18,12 @@
     },
     "allowlist": {
       "app": {
-        "all": true,
         "hide": true,
         "show": true
       },
       "dialog": {
-        "all": true
+        "open": true,
+        "save": true
       },
       "notification": {
         "all": true
@@ -31,7 +31,6 @@
       "clipboard": {
         "all": true
       },
-      "all": false,
       "globalShortcut": {
         "all": true
       },
@@ -42,18 +41,10 @@
         "all": true
       },
       "fs": {
-        "all": true,
-        "scope": [
-          "$APPDATA/*",
-          "$APPLOCALDATA/*",
-          "$APPLOG/*",
-          "$APPCONFIG/*",
-          "$DESKTOP/*",
-          "$DOWNLOAD/*",
-          "$TEMP/*",
-          "$CONFIG/*",
-          "$CACHE/**"
-        ]
+        "createDir": true,
+        "removeFile": true,
+        "writeFile": true,
+        "scope": ["$APPDATA/*", "$CACHE/**"]
       },
       "shell": {
         "all": false,
