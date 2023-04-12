@@ -14,7 +14,12 @@
   } from '$lib/store';
   import { ToastType } from '$lib/types';
   import { register, unregister } from '@tauri-apps/api/globalShortcut';
-  import { uploadFromClipboard } from '$lib/upload';
+  import { uploadFromClipboard, UploadManager } from '$lib/uploader';
+
+  let uploadManager: UploadManager;
+  $: if ($curService) {
+    uploadManager = new UploadManager($curService, $formatter);
+  }
 
   let group: string | undefined =
     $services.length === 0 ? undefined : $services[0].id;
@@ -31,7 +36,7 @@
     selectedServiceId.set(_selected.id);
     await unregister($shortcutsMap.upload);
     await register($shortcutsMap.upload, () => {
-      return uploadFromClipboard($formatter, $curService);
+      return uploadFromClipboard(uploadManager);
     });
   }
   async function clearServices() {

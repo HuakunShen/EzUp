@@ -92,13 +92,7 @@ async fn upload_imgur_from_url(client_id: String, url: String) -> Result<ImageIn
     upload_result.map_err(|err| err.to_string())
 }
 
-// error_chain! {
-//     foreign_links {
-//         Io(std::io::Error);
-//         HttpRequest(reqwest::Error);
-//     }
-// }
-
+/// Download a file from given url and save to given location
 #[tauri::command]
 async fn download_file(url: String, dest_dir: String) -> Result<String, String> {
     // let tmp_dir = Builder::new().prefix("ezup").tempdir().unwrap();
@@ -130,6 +124,7 @@ async fn download_file(url: String, dest_dir: String) -> Result<String, String> 
     Ok(dest_file_path_str)
 }
 
+/// read image from clipboard and save to given location
 #[tauri::command]
 fn image_to_file(filename: String) -> Result<String, String> {
     let mut clipboard = arboard::Clipboard::new().unwrap();
