@@ -1,10 +1,11 @@
 <script lang="ts">
   import { Dropzone } from 'flowbite-svelte';
   import FileDrop from 'svelte-tauri-filedrop';
-  import { uploadImg } from '$lib/upload';
-  import { curService, formatter } from '$lib/store';
   import { addToast } from '$lib/util';
   import { ToastType } from '$lib/types';
+  import type { UploadManager } from '$lib/uploader';
+
+  export let uploadManager: UploadManager;
 
   let clazz: string = 'w-full';
   export { clazz as class };
@@ -27,7 +28,8 @@
     } else if (paths.length == 0) {
       addToast(ToastType.Error, 'No file selected');
     } else {
-      return uploadImg(paths[0], $formatter, $curService);
+      return uploadManager.upload(paths[0]);
+      // return uploadImg(paths[0], $formatter, $curService);
     }
   }
 </script>
@@ -61,9 +63,6 @@
   </Dropzone>
 </FileDrop>
 
-<!-- <div class="dropzone" class:droppable={files.length > 0}>
-    <h2>Drop JSON files</h2>
-  </div> -->
 <style>
   .dropzone {
     margin: 20px;

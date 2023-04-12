@@ -28,7 +28,7 @@
   "devDependencies": {
     "@popperjs/core": "^2.11.6",
     "@sveltejs/adapter-static": "next",
-    "@sveltejs/kit": "^1.15.0",
+    "@sveltejs/kit": "^1.15.2",
     "@tauri-apps/cli": "^1.2.2",
     "@types/lodash": "^4.14.191",
     "@types/uuid": "^9.0.0",

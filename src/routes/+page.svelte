@@ -9,11 +9,19 @@
   import { BaseDirectory, writeBinaryFile } from '@tauri-apps/api/fs';
   import { cacheDir } from '@tauri-apps/api/path';
   import path from 'path-browserify';
-  import { uploadImg, uploadFromClipboard } from '$lib/upload';
+  // import { uploadImg, uploadFromClipboard } from '$lib/upload';
+  import { UploadManager, uploadFromClipboard } from '$lib/uploader';
+  import { onMount } from 'svelte';
+
+  let uploadManager: UploadManager;
+  $: if ($curService) {
+    uploadManager = new UploadManager($curService, $formatter);
+  }
 
   function uploadClicked(event: any) {
-    uploading.set(true);
-    return uploadImg(event.detail.url, $formatter, $curService);
+    // uploading.set(true);
+    return uploadManager.upload(event.detail.url);
+    // return uploadImg(event.detail.url, $formatter, $curService);
   }
 
   function uploadThroughFileInput(file: File) {
@@ -27,7 +35,8 @@
         dir: BaseDirectory.Cache,
       })
         .then(() => {
-          return uploadImg(destPath, $formatter, $curService);
+          return uploadManager.upload(destPath);
+          // return uploadImg(destPath, $formatter, $curService);
         })
         .catch((err) => {
           addToast(ToastType.Error, err.toString());
@@ -46,13 +55,13 @@
     <div class="w-full">
       <Heading class="mb-2" tag="h4">Upload by Drag and Drop</Heading>
     </div>
-    <DropUpload class="max-w-md max-h-52" {uploadThroughFileInput} />
+    <DropUpload class="max-w-md max-h-52" {uploadThroughFileInput} uploadManager={uploadManager} />
     <br />
     <h2 class="font-medium text-lg">OR</h2>
     <div class="w-full">
       <!-- <Heading class="mb-2" tag="h4">Upload from Clipboard</Heading> -->
       <div class="text-center mt-5">
-        <Button on:click={() => uploadFromClipboard($formatter, $curService)}
+        <Button on:click={() => uploadFromClipboard(uploadManager)}
           >Upload from Clipboard</Button
         >
       </div>

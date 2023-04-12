@@ -22,7 +22,7 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { toggleWindow } from '$lib/shortcut';
-  import { uploadFromClipboard } from '$lib/upload';
+  import { uploadFromClipboard, UploadManager } from '$lib/uploader';
 
   let activeKey = '';
   let toggleHotkeySelection: HotkeySelection;
@@ -32,6 +32,11 @@
   let toggleWarning: string = '';
   let uploadWarning: string = '';
   let format: FormatType = $formatter;
+
+  let uploadManager: UploadManager;
+  $: if ($curService) {
+    uploadManager = new UploadManager($curService, $formatter);
+  }
 
   onMount(() => {
     if (!$shortcutsMap) return goto('/');
@@ -59,7 +64,7 @@
         uploadWarning = '';
         shortcutsMap.update((m) => ({ ...m, upload: uploadHotkeyValue }));
         await register(uploadHotkeyValue, () => {
-          return uploadFromClipboard($formatter, $curService).then(() => {
+          return uploadFromClipboard(uploadManager).then(() => {
             console.log('uploaded from clipboard');
           });
         });
