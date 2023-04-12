@@ -6,7 +6,12 @@
   import { ToastType } from '$lib/types';
   import { Toast } from 'flowbite-svelte';
   import { slide } from 'svelte/transition';
-  import { curService, init as initStore, shortcutsMap, formatter } from '$lib/store';
+  import {
+    curService,
+    init as initStore,
+    shortcutsMap,
+    formatter,
+  } from '$lib/store';
   import {
     register,
     isRegistered,
@@ -14,8 +19,13 @@
   } from '@tauri-apps/api/globalShortcut';
   import { onMount } from 'svelte';
   import { toggleWindow } from '$lib/shortcut';
-  import { uploadFromClipboard } from '$lib/upload';
-  import {platform} from '@tauri-apps/api/os';
+  import { UploadManager, uploadFromClipboard } from '$lib/uploader';
+  import { platform } from '@tauri-apps/api/os';
+
+  let uploadManager: UploadManager;
+  $: if ($curService) {
+    uploadManager = new UploadManager($curService, $formatter);
+  }
 
   async function initShortcuts() {
     const toggleRegistered = await isRegistered($shortcutsMap.toggleWindow);
@@ -25,10 +35,10 @@
 
     const uploadRegistered = await isRegistered($shortcutsMap.upload);
     console.log(uploadRegistered);
-    
+
     if (!uploadRegistered) {
       await register($shortcutsMap.upload, () => {
-        return uploadFromClipboard($formatter, $curService).then(() => {
+        return uploadFromClipboard(uploadManager).then(() => {
           console.log('Uploaded from clipboard');
         });
       });
@@ -36,7 +46,7 @@
   }
 
   onMount(async () => {
-    if (await platform() !== 'linux') {
+    if ((await platform()) !== 'linux') {
       // running unregisterAll on linux seems to prevent later shortcuts registration.
       await unregisterAll();
     }
