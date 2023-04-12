@@ -1,8 +1,8 @@
 name: 'build'
 on:
   push:
-    branches:
-      - release
+    tags:
+      - 'v*'
 
 env:
   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
