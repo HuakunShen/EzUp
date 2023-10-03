@@ -1,5 +1,6 @@
 <script lang="ts">
   import { appWindow } from '@tauri-apps/api/window';
+  import Icon from '@iconify/svelte';
 </script>
 
 <div data-tauri-drag-region class="titlebar h-8">
@@ -8,33 +9,21 @@
     class="titlebar-button hover:bg-red-500"
     id="titlebar-minimize"
   >
-    <img
-      class="invert"
-      src="https://api.iconify.design/mdi:window-minimize.svg"
-      alt="minimize"
-    />
+    <Icon icon="mingcute:minimize-fill" />
   </button>
   <button
     class="titlebar-button hover:bg-red-500"
     id="titlebar-maximize"
     on:click={() => appWindow.maximize()}
   >
-    <img
-      class="invert"
-      src="https://api.iconify.design/mdi:window-maximize.svg"
-      alt="maximize"
-    />
+    <Icon icon="fluent:maximize-16-filled" />
   </button>
   <button
     class="titlebar-button hover:bg-red-500"
     id="titlebar-close"
     on:click={() => appWindow.hide()}
   >
-    <img
-      class="invert"
-      src="https://api.iconify.design/mdi:close.svg"
-      alt="close"
-    />
+    <Icon icon="material-symbols:close" />
   </button>
 </div>
 

@@ -8,11 +8,12 @@
   } from 'flowbite-svelte';
   import { page } from '$app/stores';
   import { isDev } from '$lib/util';
+  import EzUp from '$lib/images/ezup.svg'
 </script>
 <Navbar let:hidden let:toggle>
   <NavBrand href="/">
     <img
-      src="https://flowbite.com/docs/images/logo.svg"
+      src={EzUp}
       class="mr-3 h-6 sm:h-9"
       alt="Flowbite Logo"
     />
