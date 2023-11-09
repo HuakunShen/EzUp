@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "EzUp",
-    "version": "0.1.9"
+    "version": "0.1.10"
   },
   "tauri": {
     "macOSPrivateApi": true,
@@ -122,7 +122,7 @@
     "updater": {
       "active": true,
       "endpoints": [
-        "https://gist.githubusercontent.com/HuakunShen/c71fb4093e68aa2ed24860a5ea812708/raw"
+        "https://github.com/HuakunShen/ezup/releases/latest/download/latest.json"
       ],
       "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDY3OTFCOTBGMzAwNDAwMQpSV1FCUUFEemtCdDVCcE5GTFY4NGxCZW44NjBWSy95elY3dGFGSUJRR2VJdDY4cFNqcUYvYkJMRQo="
