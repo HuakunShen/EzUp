@@ -34,7 +34,6 @@
     }
 
     const uploadRegistered = await isRegistered($shortcutsMap.upload);
-    console.log(uploadRegistered);
 
     if (!uploadRegistered) {
       await register($shortcutsMap.upload, () => {
