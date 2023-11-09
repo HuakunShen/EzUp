@@ -15,7 +15,7 @@
     "build:mac:universal": "tauri build --target universal-apple-darwin"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.2.0",
+    "@tauri-apps/api": "^1.5.1",
     "@types/path-browserify": "^1.0.0",
     "lodash": "^4.17.21",
     "path-browserify": "^1.0.1",
@@ -30,7 +30,7 @@
     "@popperjs/core": "^2.11.6",
     "@sveltejs/adapter-static": "next",
     "@sveltejs/kit": "^1.15.2",
-    "@tauri-apps/cli": "^1.2.2",
+    "@tauri-apps/cli": "^1.5.6",
     "@types/lodash": "^4.14.191",
     "@types/uuid": "^9.0.0",
     "autoprefixer": "^10.4.13",
@@ -38,11 +38,11 @@
     "flowbite": "^1.6.0",
     "flowbite-svelte": "^0.29.9",
     "postcss": "^8.4.21",
-    "svelte": "^3.54.0",
-    "svelte-check": "^3.0.0",
+    "svelte": "^4.0.5",
+    "svelte-check": "^3.4.6",
     "tailwindcss": "^3.2.4",
-    "tslib": "^2.4.1",
-    "typescript": "^4.8.4",
-    "vite": "^4.0.0"
+    "tslib": "^2.6.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.4"
   }
 }
