@@ -20,6 +20,7 @@ use std::io::copy;
 // use tempfile::Builder;
 // use std::borrow::Cow;
 use std::io::Cursor;
+use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -197,6 +198,13 @@ fn main() {
         ])
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_clipboard::init())
+        .setup(|app| {
+            let window = app.get_window("main").unwrap();
+            #[cfg(target_os = "macos")]
+            apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
+                .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+            Ok(())
+        })
         .system_tray(system_tray)
         .on_system_tray_event(|app, event| match event {
             // SystemTrayEvent::LeftClick {

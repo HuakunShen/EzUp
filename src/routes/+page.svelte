@@ -12,6 +12,11 @@
   // import { uploadImg, uploadFromClipboard } from '$lib/upload';
   import { UploadManager, uploadFromClipboard } from '$lib/uploader';
   import { onMount } from 'svelte';
+  import {
+    sendNotification,
+    isPermissionGranted,
+    requestPermission,
+  } from '@tauri-apps/api/notification';
 
   let uploadManager: UploadManager;
   $: if ($curService) {
@@ -55,7 +60,11 @@
     <div class="w-full">
       <Heading class="mb-2" tag="h4">Upload by Drag and Drop</Heading>
     </div>
-    <DropUpload class="max-w-md max-h-52" {uploadThroughFileInput} uploadManager={uploadManager} />
+    <DropUpload
+      class="max-w-md max-h-52"
+      {uploadThroughFileInput}
+      {uploadManager}
+    />
     <br />
     <h2 class="font-medium text-lg">OR</h2>
     <div class="w-full">
