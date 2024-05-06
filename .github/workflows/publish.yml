@@ -3,6 +3,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 env:
   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
@@ -53,7 +54,9 @@ jobs:
           prerelease: false
       - name: Add Mac Universal Target
         if: matrix.platform == 'macos-latest'
-        run: rustup target add aarch64-apple-darwin
+        run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
       - name: Tauri Build and Release (MacOS Universal Build)
         uses: tauri-apps/tauri-action@v0
         if: matrix.platform == 'macos-latest'
