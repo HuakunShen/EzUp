@@ -8,10 +8,9 @@
   },
   "package": {
     "productName": "EzUp",
-    "version": "0.1.14"
+    "version": "0.1.15"
   },
   "tauri": {
-    "macOSPrivateApi": true,
     "systemTray": {
       "iconPath": "icons/icon.ico",
       "iconAsTemplate": true
@@ -130,7 +129,6 @@
     "windows": [
       {
         "fullscreen": false,
-        "transparent": true,
         "height": 1000,
         "width": 800,
         "resizable": true,
